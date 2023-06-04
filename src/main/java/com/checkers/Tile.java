@@ -44,5 +44,10 @@ public class Tile extends JButton{  //Rectangle
     }
 
 
+    public Color getColor() {
+        return null;
+    }
+
+
 
 }

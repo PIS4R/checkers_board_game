@@ -13,6 +13,9 @@ import javax.swing.JTable;
 import javax.swing.Timer;
 import javax.swing.table.TableModel;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 // import logic.MoveGenerator;
 // import model.Board;
 // import model.Game;
@@ -36,7 +39,9 @@ public class Board extends JPanel{
     private Tile[][] tiles;
     private Pawn[][] pawns;
     private Pawn selectedPawn;
-
+    private Color currentPlayer;
+    private boolean gameOver;
+    private Color winner;
 
     public Board(MainWindow window, int width, int height){
         //setSize( 400, 400 );
@@ -45,15 +50,39 @@ public class Board extends JPanel{
         this.width = width;
         this.height = height;
         this.window = window;
-        //board = ImageIO.read(new File("/home/michalpisarski/Dokumenty/Checkers java/checkers/src/assets/board2.png"));
+
+        currentPlayer = Color.BLACK;
+        gameOver = false;
 
         tiles = new Tile[8][8];
         pawns = new Pawn[8][8];
         setTiles();
         setPawns();
 
+        addMouseListener(new MouseAdapter() {
 
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int mouseX = e.getX();
+                int mouseY = e.getY();
 
+                int row = mouseY / 50;
+                int col = mouseX / 50;
+
+                if (selectedPawn == null) {
+                    if (pawns[row][col] != null) {
+                        selectedPawn = pawns[row][col];
+                        repaint();
+                    }
+                } else {
+                    if (isValidMove(selectedPawn, row, col)) {
+                        performMove(selectedPawn, row, col);
+                        selectedPawn = null;
+                        repaint();
+                    }
+                }
+            }
+        });
 	}
 
     // public Board(MainWindow window) { //Game game, Player player1, Player player2
@@ -102,6 +131,73 @@ public class Board extends JPanel{
         pawns[5][6] = new Pawn(6, 5, Color.WHITE);
     }
 
+    private boolean isValidMove(Pawn pawn, int newRow, int newCol) {
+        if (pawns[newRow][newCol] != null) {
+            return false;
+        }
+
+        int currentRow = pawn.getY();
+        int currentCol = pawn.getX();
+
+        int rowDiff = Math.abs(newRow - currentRow);
+        int colDiff = Math.abs(newCol - currentCol);
+
+        if(pawns[rowDiff][colDiff] != null){
+            return rowDiff == colDiff;
+        } else{
+            return rowDiff == 1 && colDiff == 1;
+        }
+
+        //return  rowDiff == 1 && colDiff == 1;   //rowDiff == colDiff;
+        // if (rowDiff == colDiff) {
+        //     int rowDirection = newRow - currentRow > 0 ? 1 : -1;
+        //     int colDirection = newCol - currentCol > 0 ? 1 : -1;
+
+        //     for (int i = 1; i < rowDiff; i++) {
+        //         int checkRow = currentRow + (i * rowDirection);
+        //         int checkCol = currentCol + (i * colDirection);
+
+        //         if (pawns[checkRow][checkCol] != null && pawns[checkRow][checkCol].getColor() != pawn.getColor()) {
+        //             return true;
+        //         }
+        //     }
+        // }
+
+        // return false;
+    }
+
+
+
+    private void performMove(Pawn pawn, int newRow, int newCol) {
+        int currentRow = pawn.getY();
+        int currentCol = pawn.getX();
+
+        pawns[currentRow][currentCol] = null;
+        pawns[newRow][newCol] = pawn;
+
+        pawn.setX(newCol);
+        pawn.setY(newRow);
+
+
+        int rowDiff = Math.abs(newRow - currentRow);
+        int colDiff = Math.abs(newCol - currentCol);
+
+        if (rowDiff == colDiff) {
+            int rowDirection = newRow - currentRow > 0 ? 1 : -1;
+            int colDirection = newCol - currentCol > 0 ? 1 : -1;
+
+            for (int i = 1; i < rowDiff; i++) {
+                int checkRow = currentRow + (i * rowDirection);
+                int checkCol = currentCol + (i * colDirection);
+
+                if (pawns[checkRow][checkCol] != null && pawns[checkRow][checkCol].getColor() != pawn.getColor()) {
+                    pawns[checkRow][checkCol] = null;
+                }
+            }
+        }
+    }
+
+
 
     @Override
     public Dimension getPreferredSize() {
@@ -121,7 +217,21 @@ public class Board extends JPanel{
                 }
             }
         }
+
+        if (selectedPawn != null) {
+            g.setColor(Color.YELLOW);
+            int selectedX = selectedPawn.getX();
+            int selectedY = selectedPawn.getY();
+            g.drawRect(selectedX * 50, selectedY * 50, 50, 50);
+
+            g.setColor(Color.GREEN);
+            for (int row = 0; row < 8; row++) {
+                for (int col = 0; col < 8; col++) {
+                    if (isValidMove(selectedPawn, row, col)) {
+                        g.drawRect(col * 50, row * 50, 50, 50);
+                    }
+                }
+            }
+        }
     }
-
-
 }
