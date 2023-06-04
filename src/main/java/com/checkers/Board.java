@@ -77,9 +77,9 @@ public class Board extends JPanel{
                     if (isValidMove(selectedPawn, row, col)) {
                         performMove(selectedPawn, row, col);
                         checkForKing(selectedPawn);
-                        //checkForGameOver();
+                        checkForGameOver();
                         selectedPawn = null;
-                        //switchPlayer();
+                        switchPlayer();
                         repaint();
                     }
                 }
@@ -239,12 +239,40 @@ public class Board extends JPanel{
         }
     }
 
+    private void checkForGameOver() {
+        boolean whitePiecesLeft = false;
+        boolean blackPiecesLeft = false;
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (pawns[row][col] != null) {
+                    if (pawns[row][col].getColor() == Color.WHITE) {
+                        whitePiecesLeft = true;
+                    } else {
+                        blackPiecesLeft = true;
+                    }
+                }
+            }
+        }
+
+        if (!whitePiecesLeft) {
+            gameOver = true;
+            winner = Color.BLACK;
+        } else if (!blackPiecesLeft) {
+            gameOver = true;
+            winner = Color.WHITE;
+        }
+
+        //add other possibilites to win (no move possible)
+    }
 
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(8 * 50, 8 * 50);
     }
-
+    private void switchPlayer() {
+        currentPlayer = currentPlayer == Color.BLACK ? Color.WHITE: Color.BLACK;
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -274,5 +302,18 @@ public class Board extends JPanel{
                 }
             }
         }
+
+        if (gameOver) {
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Arial", Font.BOLD, 40));
+            String message = "Game Over! " + (winner == Color.WHITE ? "White" : "Black") + " wins!";
+            int messageWidth = g.getFontMetrics().stringWidth(message);
+            int x = (getWidth() - messageWidth) / 2;
+            int y = getHeight() / 2;
+            g.drawString(message, x, y);
+        }
+
+
+
     }
 }
