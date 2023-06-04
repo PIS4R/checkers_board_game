@@ -37,10 +37,12 @@ public class Board extends JPanel{
 
     private Tile[][] tiles;
     private Pawn[][] pawns;
-    private Pawn selectedPawn;
+    private transient Pawn selectedPawn;
     private Color currentPlayer;
     private boolean gameOver;
     private Color winner;
+    private boolean capturingMoveAvailable;
+
 
     public Board(MainWindow window, int width, int height){
         //setSize( 400, 400 );
@@ -52,6 +54,8 @@ public class Board extends JPanel{
 
         currentPlayer = Color.BLACK;
         gameOver = false;
+        capturingMoveAvailable = false;
+
 
         tiles = new Tile[8][8];
         pawns = new Pawn[8][8];
@@ -62,6 +66,11 @@ public class Board extends JPanel{
 
             @Override
             public void mousePressed(MouseEvent e) {
+
+                if (gameOver) {
+                    return;
+                }
+
                 int mouseX = e.getX();
                 int mouseY = e.getY();
 
@@ -69,19 +78,22 @@ public class Board extends JPanel{
                 int col = mouseX / 50;
 
                 if (selectedPawn == null) {
-                    if (pawns[row][col] != null) {
+                    if (pawns[row][col] != null && pawns[row][col].getColor() == currentPlayer) {
                         selectedPawn = pawns[row][col];
                         repaint();
                     }
-                } else {
-                    if (isValidMove(selectedPawn, row, col)) {
+                } else{
+                    if(isValidMove(selectedPawn, row, col)){
                         performMove(selectedPawn, row, col);
                         checkForKing(selectedPawn);
                         checkForGameOver();
                         selectedPawn = null;
                         switchPlayer();
                         repaint();
+                    } else{
+                        selectedPawn = pawns[row][col];
                     }
+                    repaint();
                 }
             }
         });
@@ -139,6 +151,9 @@ public class Board extends JPanel{
             pawns[newRow][newCol] != null) {
                 return false;
         }
+
+        if(pawn.getColor() != currentPlayer)
+            return false;
 
         int currentRow = pawn.getY();
         int currentCol = pawn.getX();
@@ -271,7 +286,7 @@ public class Board extends JPanel{
         return new Dimension(8 * 50, 8 * 50);
     }
     private void switchPlayer() {
-        currentPlayer = currentPlayer == Color.BLACK ? Color.WHITE: Color.BLACK;
+        currentPlayer = (currentPlayer == Color.BLACK ? Color.WHITE: Color.BLACK);
     }
 
     @Override
