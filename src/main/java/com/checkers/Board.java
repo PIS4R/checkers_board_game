@@ -151,6 +151,16 @@ public class Board extends JPanel{
             return false;
         }
 
+        if (!pawn.isKing()) {
+            if (pawn.getColor() == Color.BLACK && rowDiff < 0) {
+                return false;
+            }
+            if (pawn.getColor() == Color.WHITE && rowDiff > 0) {
+                return false;
+            }
+        }
+
+
         if (Math.abs(rowDiff) == 1 && Math.abs(colDiff) == 1) {
             return true;
         }
