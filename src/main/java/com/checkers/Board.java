@@ -76,7 +76,7 @@ public class Board extends JPanel{
                 } else {
                     if (isValidMove(selectedPawn, row, col)) {
                         performMove(selectedPawn, row, col);
-                        //checkForKing(selectedPawn);
+                        checkForKing(selectedPawn);
                         //checkForGameOver();
                         selectedPawn = null;
                         //switchPlayer();
@@ -228,7 +228,16 @@ public class Board extends JPanel{
             }
         }
     }
-
+    private void checkForKing(Pawn piece) {
+        if (!piece.isKing()) {
+            int row = piece.getY();
+            if (row == 0 && piece.getColor() == Color.WHITE) {
+                piece.makeKing();
+            } else if (row == 8 - 1 && piece.getColor() == Color.BLACK) {
+                piece.makeKing();
+            }
+        }
+    }
 
 
     @Override

@@ -50,12 +50,21 @@ class Pawn {
 
         int pieceHeight = tileSize / 2;
         if (isKing) {
-            pieceHeight = tileSize;
+            g.setColor(color);
+            g.drawOval((x * tileSize)  + xOffset, (y * tileSize) + yOffset, tileSize / 2,  tileSize / 2);
+
+        } else{
+            g.setColor(color);
+            //pieceHeight = tileSize;
+            g.fillOval((x * tileSize)  + xOffset, (y * tileSize) + yOffset, tileSize / 2,  tileSize / 2);
         }
 
-        g.setColor(color);
-        //g.fillOval(x * tileSize + xOffset, y * tileSize + yOffset, tileSize / 2, tileSize / 2);
-        g.fillOval((x * tileSize)  + xOffset, (y * tileSize) + yOffset, tileSize / 2,  pieceHeight);
+
+
+
+        // g.setColor(color);
+        // //g.fillOval(x * tileSize + xOffset, y * tileSize + yOffset, tileSize / 2, tileSize / 2);
+        // g.fillOval((x * tileSize)  + xOffset, (y * tileSize) + yOffset, tileSize / 2,  pieceHeight);
 
     }
 
