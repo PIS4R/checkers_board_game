@@ -28,7 +28,6 @@ import java.awt.event.MouseEvent;
 public class Board extends JPanel{
 
 
-    private static final int PADDING = 16;
 	//private Game game;
     private MainWindow window;
     private boolean COLOR;
@@ -77,7 +76,10 @@ public class Board extends JPanel{
                 } else {
                     if (isValidMove(selectedPawn, row, col)) {
                         performMove(selectedPawn, row, col);
+                        //checkForKing(selectedPawn);
+                        //checkForGameOver();
                         selectedPawn = null;
+                        //switchPlayer();
                         repaint();
                     }
                 }
@@ -132,38 +134,58 @@ public class Board extends JPanel{
     }
 
     private boolean isValidMove(Pawn pawn, int newRow, int newCol) {
-        if (pawns[newRow][newCol] != null) {
-            return false;
+        if (newRow < 0 || newRow >= 8 ||
+            newCol < 0 || newCol >= 8 ||
+            pawns[newRow][newCol] != null) {
+                return false;
         }
 
         int currentRow = pawn.getY();
         int currentCol = pawn.getX();
 
-        int rowDiff = Math.abs(newRow - currentRow);
-        int colDiff = Math.abs(newCol - currentCol);
+        int rowDiff = newRow - currentRow;
+        int colDiff = newCol - currentCol;
 
-        if(pawns[rowDiff][colDiff] != null){
-            return rowDiff == colDiff;
-        } else{
-            return rowDiff == 1 && colDiff == 1;
+        //return rowDiff == colDiff;
+        if (Math.abs(rowDiff) != Math.abs(colDiff)) {
+            return false;
         }
 
-        //return  rowDiff == 1 && colDiff == 1;   //rowDiff == colDiff;
-        // if (rowDiff == colDiff) {
-        //     int rowDirection = newRow - currentRow > 0 ? 1 : -1;
-        //     int colDirection = newCol - currentCol > 0 ? 1 : -1;
+        if (Math.abs(rowDiff) == 1 && Math.abs(colDiff) == 1) {
+            return true;
+        }
 
-        //     for (int i = 1; i < rowDiff; i++) {
-        //         int checkRow = currentRow + (i * rowDirection);
-        //         int checkCol = currentCol + (i * colDirection);
+        int rowDirection = rowDiff > 0 ? 1 : -1;
+        int colDirection = colDiff > 0 ? 1 : -1;
 
-        //         if (pawns[checkRow][checkCol] != null && pawns[checkRow][checkCol].getColor() != pawn.getColor()) {
-        //             return true;
-        //         }
-        //     }
-        // }
+        int midRow = currentRow + rowDirection;
+        int midCol = currentCol + colDirection;
 
-        // return false;
+        while (midRow != newRow && midCol != newCol) {
+
+            if(midRow > 7 || midCol > 7)
+                break;
+
+            if (pawns[midRow][midCol] != null &&
+                pawns[midRow][midCol].getColor() != pawn.getColor()) {
+
+                midRow += rowDirection;
+                midCol += colDirection;
+
+                if (midRow == newRow && midCol == newCol) {
+                    return true;
+                }
+
+                if (pawns[midRow][midCol] != null) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        return false;
+
     }
 
 
