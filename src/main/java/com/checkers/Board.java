@@ -42,7 +42,7 @@ public class Board extends JPanel{
     private boolean gameOver;
     private Color winner;
     private boolean capturingMoveAvailable;
-
+    List<Pawn> possibleCaptures;
 
     public Board(MainWindow window, int width, int height){
         //setSize( 400, 400 );
@@ -55,7 +55,7 @@ public class Board extends JPanel{
         currentPlayer = Color.BLACK;
         gameOver = false;
         capturingMoveAvailable = false;
-
+        possibleCaptures = new ArrayList<>();
 
         tiles = new Tile[8][8];
         pawns = new Pawn[8][8];
@@ -77,12 +77,20 @@ public class Board extends JPanel{
                 int row = mouseY / 50;
                 int col = mouseX / 50;
 
-                if (selectedPawn == null) {
+                if (selectedPawn == null) { //pick a pawn
                     if (pawns[row][col] != null && pawns[row][col].getColor() == currentPlayer) {
                         selectedPawn = pawns[row][col];
-                        repaint();
+                        possibleCaptures = hasCapturingMove(selectedPawn);
+                        if(!possibleCaptures.isEmpty()){
+                            repaint();
+                            System.out.println("[ " + selectedPawn.getX() + ", " + selectedPawn.getY() + " ]");
+                        }
+                        possibleCaptures.clear();
+
+                        //repaint();
                     }
-                } else{
+                } else{ //perform a move
+
                     if(isValidMove(selectedPawn, row, col)){
                         performMove(selectedPawn, row, col);
                         checkForKing(selectedPawn);
@@ -93,6 +101,7 @@ public class Board extends JPanel{
                     } else{
                         selectedPawn = pawns[row][col];
                     }
+
                     repaint();
                 }
             }
@@ -213,8 +222,6 @@ public class Board extends JPanel{
 
     }
 
-
-
     private void performMove(Pawn pawn, int newRow, int newCol) {
         int currentRow = pawn.getY();
         int currentCol = pawn.getX();
@@ -243,13 +250,94 @@ public class Board extends JPanel{
             }
         }
     }
-    private void checkForKing(Pawn piece) {
+
+    private List<Pawn> hasCapturingMove(Pawn pawn) {
+        int currentRow = pawn.getY();
+        int currentCol = pawn.getX();
+        //List<Pawn> possibleCaptures = new ArrayList<>();
+
+
+        //black one
+        if(pawn.getColor() == Color.BLACK){
+            if (isValidCapture(pawn, currentRow + 2, currentCol + 2, currentRow + 1, currentCol + 1)) {
+                possibleCaptures.add(pawns[currentRow + 1][currentCol + 1]);
+            }
+            if (isValidCapture(pawn, currentRow + 2, currentCol - 2, currentRow + 1, currentCol - 1)) {
+                possibleCaptures.add(pawns[currentRow + 1][currentCol - 1]);
+            }
+            if (pawn.isKing()) {
+                if (isValidCapture(pawn, currentRow - 2, currentCol + 2, currentRow - 1, currentCol + 1)) {
+                    possibleCaptures.add(pawns[currentRow - 1][currentCol + 1]);
+                }
+                if (isValidCapture(pawn, currentRow - 2, currentCol - 2, currentRow - 1, currentCol - 1)) {
+                    possibleCaptures.add(pawns[currentRow - 1][currentCol - 1]);
+                }
+            }
+        }
+
+        if(pawn.getColor() == Color.WHITE){
+            if (isValidCapture(pawn, currentRow - 2, currentCol - 2, currentRow - 1, currentCol - 1)) {
+                possibleCaptures.add(pawns[currentRow - 1][currentCol - 1]);
+            }
+            if (isValidCapture(pawn, currentRow - 2, currentCol + 2, currentRow - 1, currentCol + 1)) {
+                possibleCaptures.add(pawns[currentRow - 1][currentCol + 1]);
+            }
+            if (pawn.isKing()) {
+                if (isValidCapture(pawn, currentRow + 2, currentCol - 2, currentRow + 1, currentCol - 1)) {
+                    possibleCaptures.add(pawns[currentRow + 1][currentCol - 1]);
+                }
+                if (isValidCapture(pawn, currentRow + 2, currentCol + 2, currentRow + 1, currentCol + 1)) {
+                    possibleCaptures.add(pawns[currentRow + 1][currentCol + 1]);
+                }
+            }
+        }
+
+        return possibleCaptures;     //!possibleCaptures.isEmpty();
+    }
+
+    private boolean isValidCapture(Pawn piece, int newRow, int newCol, int capturedRow, int capturedCol) {
+        if (newRow < 0 || newRow >= 8 || newCol < 0 || newCol >= 8 ||
+                capturedRow < 0 || capturedRow >= 8 || capturedCol < 0 || capturedCol >= 8 ||
+                pawns[newRow][newCol] != null || pawns[capturedRow][capturedCol] == null ||
+                pawns[capturedRow][capturedCol].getColor() == piece.getColor()) {
+            return false;
+        }
+
+        int currentRow = piece.getY();
+        int currentCol = piece.getX();
+
+        int rowDiff = newRow - currentRow;
+        int colDiff = newCol - currentCol;
+
         if (!piece.isKing()) {
-            int row = piece.getY();
-            if (row == 0 && piece.getColor() == Color.WHITE) {
-                piece.makeKing();
-            } else if (row == 8 - 1 && piece.getColor() == Color.BLACK) {
-                piece.makeKing();
+            // if (piece.getColor() == Color.BLACK && rowDiff < 0) {
+            //     return false;
+            // }
+            // if (piece.getColor() == Color.WHITE && rowDiff < 0) {
+            //     return false;
+            // }
+        }
+
+        // if (!piece.isKing()) {
+        //     if (piece.getColor() == Color.BLACK && rowDiff > 0) {
+        //         return false;
+        //     }
+        //     if (piece.getColor() == Color.WHITE && rowDiff < 0) {
+        //         return false;
+        //     }
+        // }
+
+        return Math.abs(rowDiff) == 2 && Math.abs(colDiff) == 2;
+    }
+
+
+    private void checkForKing(Pawn pawn) {
+        if (!pawn.isKing()) {
+            int row = pawn.getY();
+            if (row == 0 && pawn.getColor() == Color.WHITE) {
+                pawn.makeKing();
+            } else if (row == 8 - 1 && pawn.getColor() == Color.BLACK) {
+                pawn.makeKing();
             }
         }
     }
@@ -281,14 +369,14 @@ public class Board extends JPanel{
         //add other possibilites to win (no move possible)
     }
 
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(8 * 50, 8 * 50);
-    }
     private void switchPlayer() {
         currentPlayer = (currentPlayer == Color.BLACK ? Color.WHITE: Color.BLACK);
     }
 
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(8 * 50, 8 * 50);
+    }
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -313,6 +401,15 @@ public class Board extends JPanel{
                 for (int col = 0; col < 8; col++) {
                     if (isValidMove(selectedPawn, row, col)) {
                         g.drawRect(col * 50, row * 50, 50, 50);
+                    }
+                    if(!possibleCaptures.isEmpty()){  //
+                        g.setColor(Color.BLUE);
+                        /////////////////////////////////////////////////////
+                        for(Pawn pawn : possibleCaptures){
+                            System.out.println("[ " + pawn.getX() + ", " + pawn.getY() + " ]");
+                            g.drawRect(pawn.getX(), pawn.getY(), 50, 50);
+                        }
+                        g.setColor(Color.GREEN);
                     }
                 }
             }
