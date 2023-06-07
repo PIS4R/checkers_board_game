@@ -49,6 +49,9 @@ public class Board extends JPanel{
 
     Map<Integer, Integer> movesAfterCapture;
 
+    int deep = 0;
+    int deep2 = 0;
+
     public Board(MainWindow window, int width, int height){
         //setSize( 400, 400 );
         super.setBackground(Color.LIGHT_GRAY);
@@ -163,9 +166,11 @@ public class Board extends JPanel{
         // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
         // pawns[5][6] = new Pawn(6, 5, Color.WHITE);
 
-        pawns[5][4] = new Pawn(4, 5, Color.WHITE);
-        pawns[3][2] = new Pawn(2, 3, Color.WHITE);
-        pawns[2][1] = new Pawn(1, 2, Color.BLACK);
+
+        pawns[6][1] = new Pawn(1, 6, Color.WHITE);
+        pawns[4][3] = new Pawn(3, 4, Color.WHITE);
+        pawns[2][1] = new Pawn(1, 2, Color.WHITE);
+        pawns[1][0] = new Pawn(0, 1, Color.BLACK);
 
 
     }
@@ -269,16 +274,59 @@ public class Board extends JPanel{
 
 
 
-    private boolean searchCapturingMove(Pawn pawn, int currentRow, int currentCol) {
+    private Integer searchCapturingMove(Pawn pawn, int currentRow, int currentCol) {
 
         if(pawn.getColor() == Color.BLACK){
             if (isValidCapture(pawn, currentRow + 2, currentCol + 2, currentRow + 1, currentCol + 1)) {
                 possibleCaptures.add(pawns[currentRow + 1][currentCol + 1]);
                 movesAfterCapture.put(currentRow + 2, currentCol + 2);
 
-                currentRow += 2; currentCol += 2;
-                return searchCapturingMove(pawn, currentRow, currentCol);
+
+                if (isValidCapture(pawn, currentRow + 4, currentCol, currentRow + 2, currentCol + 2)) {
+                    possibleCaptures.add(pawns[currentRow + 2][currentCol]);
+                    movesAfterCapture.put(currentRow + 4, currentCol);
+                    System.out.println("huuuj1");
+                    return searchCapturingMove(pawn, currentRow += 4, currentCol);
+
+                }
+                if (isValidCapture(pawn, currentRow + 4, currentCol, currentRow + 2, currentCol - 2)) {
+                    possibleCaptures.add(pawns[currentRow + 2][currentCol]);
+                    movesAfterCapture.put(currentRow + 4, currentCol);
+                    System.out.println("huuuj1");
+                    return searchCapturingMove(pawn, currentRow += 4, currentCol);
+
+                }
+                if(isValidCapture(pawn, currentRow + 4, currentCol + 4, currentRow + 2, currentCol + 2)){
+                    possibleCaptures.add(pawns[currentRow + 2][currentCol+2]);
+                    movesAfterCapture.put(currentRow + 4, currentCol+4);
+                    System.out.println("huuuj2");
+                    return searchCapturingMove(pawn, currentRow += 4, currentCol +=4);
+
+                }
+                if(isValidCapture(pawn, currentRow + 4, currentCol + 4, currentRow + 2, currentCol - 2)){
+                    possibleCaptures.add(pawns[currentRow + 2][currentCol+2]);
+                    movesAfterCapture.put(currentRow + 4, currentCol+4);
+                    System.out.println("huuuj2");
+                    return searchCapturingMove(pawn, currentRow += 4, currentCol +=4);
+
+                }
+                //todo problem,ze nie wiadomo ktory z ruchow dalej zaproawdzi
+                //todo pomysl zeby zwracaly inty najpierw wywolanie potem zliczanie ktora dalej
+
+                //isValidCapture(pawn, currentRow += 4, currentCol -= 4, currentRow + 2, currentCol + 2)
+
+                //deep2 += searchCapturingMove(pawn, currentRow += 2, currentCol -= 2);
+                //deep += searchCapturingMove(pawn, currentRow += 2, currentCol += 2);
+                //System.out.println("** "+deep+", "+deep2+"**\n");
+                // if(deep > deep2)
+                //     return searchCapturingMove(pawn, currentRow += 2, currentCol += 2);
+                // else
+                //     return searchCapturingMove(pawn, currentRow += 2, currentCol -= 2);
+
+                return 0;
+                //return searchCapturingMove(pawn, currentRow += 2, currentCol +=2);
             }
+
             if (isValidCapture(pawn, currentRow + 2, currentCol - 2, currentRow + 1, currentCol - 1)) {
                 possibleCaptures.add(pawns[currentRow + 1][currentCol - 1]);
                 movesAfterCapture.put(currentRow + 2, currentCol - 2);
@@ -331,9 +379,9 @@ public class Board extends JPanel{
             }
         }
         if(possibleCaptures.isEmpty())
-            return false;
+            return 0;
 
-        return true;
+        return 1;
 
     }
 
@@ -362,14 +410,14 @@ public class Board extends JPanel{
         int colDiff = newCol - currentCol;
         //ROWdIFF =4, NEWROW = 6 CURRENT =2
         //coldiff 4, newcol 5, currentcol = 1
-        if (!piece.isKing()) {
-            if (piece.getColor() == Color.BLACK && rowDiff < 0) {
-                return false;
-            }
-            if (piece.getColor() == Color.WHITE && rowDiff > 0) {
-                return false;
-            }
-        }
+        // if (!piece.isKing()) {
+        //     if (piece.getColor() == Color.BLACK && rowDiff < 0) {
+        //         return false;
+        //     }
+        //     if (piece.getColor() == Color.WHITE && rowDiff > 0) {
+        //         return false;
+        //     }
+        // }
 
         // if (!piece.isKing()) {
         //     if (piece.getColor() == Color.BLACK && rowDiff > 0) {
@@ -457,7 +505,7 @@ public class Board extends JPanel{
                     }
                 }
             }
-            g.setColor(Color.BLUE);
+            g.setColor(Color.RED);
             int captureX;
             int captureY;
             for(Map.Entry<Integer, Integer> cords : movesAfterCapture.entrySet()){
