@@ -45,12 +45,11 @@ public class Board extends JPanel{
     private Color winner;
     private boolean capturingMoveAvailable;
 
-    List<Pawn> possibleCaptures;
+    List<Pawn> capturedPawns;
 
     Map<Integer, Integer> movesAfterCapture;
 
-    int deep = 0;
-    int deep2 = 0;
+
 
     public Board(MainWindow window, int width, int height){
         //setSize( 400, 400 );
@@ -63,8 +62,9 @@ public class Board extends JPanel{
         currentPlayer = Color.BLACK;
         gameOver = false;
         capturingMoveAvailable = false;
-        possibleCaptures = new ArrayList<>();
+        capturedPawns = new ArrayList<>();
         movesAfterCapture = new HashMap<>();
+
 
         tiles = new Tile[8][8];
         pawns = new Pawn[8][8];
@@ -90,6 +90,7 @@ public class Board extends JPanel{
                     if (pawns[row][col] != null && pawns[row][col].getColor() == currentPlayer) {
                         selectedPawn = pawns[row][col];
                         movesAfterCapture.clear();
+                        capturedPawns.clear();
                         findCapturingMove(selectedPawn);
                         if(!movesAfterCapture.isEmpty()){
                             for(Map.Entry<Integer, Integer> cords : movesAfterCapture.entrySet()){
@@ -98,21 +99,36 @@ public class Board extends JPanel{
                         }
                         repaint();
                         System.out.println("\n\n");
-                        possibleCaptures.clear();
-
                         //repaint();
                     }
                 } else{ //perform a move
+                    if(!movesAfterCapture.isEmpty()){
 
-                    if(isValidMove(selectedPawn, row, col)){
                         performMove(selectedPawn, row, col);
                         checkForKing(selectedPawn);
+
+
+                        for (Pawn pawn : capturedPawns){
+                            System.out.println("PAWNSTOCAPTURE[ " + pawn.getX() + ", " + pawn.getY() + " ]");
+                            pawns[pawn.getY()][pawn.getX()] = null;
+
+                        }
+
                         checkForGameOver();
                         selectedPawn = null;
                         switchPlayer();
-                        repaint();
+
                     } else{
-                        selectedPawn = pawns[row][col];
+                        if(isValidMove(selectedPawn, row, col)){
+                            performMove(selectedPawn, row, col);
+                            checkForKing(selectedPawn);
+                            checkForGameOver();
+                            selectedPawn = null;
+                            switchPlayer();
+                            //repaint();
+                        } else{
+                            selectedPawn = pawns[row][col];
+                        }
                     }
 
                     repaint();
@@ -135,42 +151,42 @@ public class Board extends JPanel{
     }
 
     private void setPawns(){
-        // pawns[0][1] = new Pawn(1, 0, Color.BLACK);
-        // pawns[0][3] = new Pawn(3, 0, Color.BLACK);
-        // pawns[0][5] = new Pawn(5, 0, Color.BLACK);
-        // pawns[0][7] = new Pawn(7, 0, Color.BLACK);
+        pawns[0][1] = new Pawn(1, 0, Color.BLACK);
+        pawns[0][3] = new Pawn(3, 0, Color.BLACK);
+        pawns[0][5] = new Pawn(5, 0, Color.BLACK);
+        pawns[0][7] = new Pawn(7, 0, Color.BLACK);
 
-        // pawns[1][0] = new Pawn(0, 1, Color.BLACK);
-        // pawns[1][2] = new Pawn(2, 1, Color.BLACK);
-        // pawns[1][4] = new Pawn(4, 1, Color.BLACK);
-        // pawns[1][6] = new Pawn(6, 1, Color.BLACK);
+        pawns[1][0] = new Pawn(0, 1, Color.BLACK);
+        pawns[1][2] = new Pawn(2, 1, Color.BLACK);
+        pawns[1][4] = new Pawn(4, 1, Color.BLACK);
+        pawns[1][6] = new Pawn(6, 1, Color.BLACK);
 
-        // pawns[2][1] = new Pawn(1, 2, Color.BLACK);
-        // pawns[2][3] = new Pawn(3, 2, Color.BLACK);
-        // pawns[2][5] = new Pawn(5, 2, Color.BLACK);
-        // pawns[2][7] = new Pawn(7, 2, Color.BLACK);
+        pawns[2][1] = new Pawn(1, 2, Color.BLACK);
+        pawns[2][3] = new Pawn(3, 2, Color.BLACK);
+        pawns[2][5] = new Pawn(5, 2, Color.BLACK);
+        pawns[2][7] = new Pawn(7, 2, Color.BLACK);
 
 
-        // pawns[7][0] = new Pawn(0, 7, Color.WHITE);
-        // pawns[7][2] = new Pawn(2, 7, Color.WHITE);
-        // pawns[7][4] = new Pawn(4, 7, Color.WHITE);
-        // pawns[7][6] = new Pawn(6, 7, Color.WHITE);
-
-        // pawns[6][1] = new Pawn(1, 6, Color.WHITE);
-        // pawns[6][3] = new Pawn(3, 6, Color.WHITE);
-        // pawns[6][5] = new Pawn(5, 6, Color.WHITE);
-        // pawns[6][7] = new Pawn(7, 6, Color.WHITE);
-
-        // pawns[5][0] = new Pawn(0, 5, Color.WHITE);
-        // pawns[5][2] = new Pawn(2, 5, Color.WHITE);
-        // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
-        // pawns[5][6] = new Pawn(6, 5, Color.WHITE);
-
+        pawns[7][0] = new Pawn(0, 7, Color.WHITE);
+        pawns[7][2] = new Pawn(2, 7, Color.WHITE);
+        pawns[7][4] = new Pawn(4, 7, Color.WHITE);
+        pawns[7][6] = new Pawn(6, 7, Color.WHITE);
 
         pawns[6][1] = new Pawn(1, 6, Color.WHITE);
-        pawns[4][3] = new Pawn(3, 4, Color.WHITE);
-        pawns[2][1] = new Pawn(1, 2, Color.WHITE);
-        pawns[1][0] = new Pawn(0, 1, Color.BLACK);
+        pawns[6][3] = new Pawn(3, 6, Color.WHITE);
+        pawns[6][5] = new Pawn(5, 6, Color.WHITE);
+        pawns[6][7] = new Pawn(7, 6, Color.WHITE);
+
+        pawns[5][0] = new Pawn(0, 5, Color.WHITE);
+        pawns[5][2] = new Pawn(2, 5, Color.WHITE);
+        pawns[5][4] = new Pawn(4, 5, Color.WHITE);
+        pawns[5][6] = new Pawn(6, 5, Color.WHITE);
+
+
+        // pawns[6][1] = new Pawn(1, 6, Color.WHITE);
+        // pawns[4][3] = new Pawn(3, 4, Color.WHITE);
+        // pawns[2][1] = new Pawn(1, 2, Color.WHITE);
+        // pawns[1][0] = new Pawn(0, 1, Color.BLACK);
 
 
     }
@@ -185,6 +201,13 @@ public class Board extends JPanel{
         if(pawn.getColor() != currentPlayer)
             return false;
 
+        for(Map.Entry<Integer, Integer> cords : movesAfterCapture.entrySet()){
+            if(cords.getValue() == new_X && cords.getKey() == new_Y){
+                return true;
+            }
+        }
+
+
         int current_X = pawn.getY();
         int current_Y = pawn.getX();
 
@@ -195,6 +218,9 @@ public class Board extends JPanel{
         if (Math.abs(rowDiff) != Math.abs(colDiff)) {
             return false;
         }
+
+
+
 
         if (!pawn.isKing()) {
             if (pawn.getColor() == Color.BLACK && rowDiff < 0) {
@@ -281,15 +307,19 @@ public class Board extends JPanel{
 
     private Integer searchCapturingMove(Pawn pawn, int current_X, int current_Y) {
 
+
+
         if(pawn.getColor() == Color.BLACK){
+        //forward right
             if (isValidCapture(pawn, current_X, current_Y, current_X + 2, current_Y + 2, current_X + 1, current_Y + 1)) {
-                //movesAfterCapture.put(current_X+2, current_Y+2); //todo add not put
 
                 Pawn tempLeft = new Pawn(current_X, current_Y+2, currentPlayer); //Pawn :(
-                //tempLeft.setX(current_Y);
-                //tempLeft.setY(current_X+2); //pawn.getY()+2
-                //System.out.println("new place[ " + (tempLeft.getY()+2) + ", " + (tempLeft.getX()-2) + " ]");
+
                 if(isValidCapture(tempLeft, tempLeft.getX(), tempLeft.getY(), tempLeft.getX()-2, tempLeft.getY()+2, tempLeft.getX()-1, tempLeft.getY()+1)){
+                    movesAfterCapture.put(current_X, current_Y+2);
+                    capturedPawns.add(pawns[current_Y+2+1][current_X-1]);
+
+                    capturedPawns.add(pawns[tempLeft.getY()-1][tempLeft.getX()+1]);
                     movesAfterCapture.put(tempLeft.getX()-2, tempLeft.getY()+2);
                     //movesAfterCapture.put(tempLeft.getX(), tempLeft.getY()); //todo add not put
                     System.out.println("new movesAfterCapture[ " + (tempLeft.getX()-2) + ", " + (tempLeft.getY()+2) + " ]");
@@ -298,65 +328,87 @@ public class Board extends JPanel{
                     return searchCapturingMove(pawn, tempcurrent_X -=2, tempcurrent_Y += 2);
                 }
 
-
-                possibleCaptures.add(pawns[current_Y + 1][current_X + 1]);
+                capturedPawns.add(pawns[current_Y + 1][current_X + 1]);
                 movesAfterCapture.put(current_X + 2, current_Y + 2);
 
                 return searchCapturingMove(pawn, current_X += 2, current_Y +=2);
             }
 
-            if (isValidCapture(pawn,current_X, current_Y, current_X - 2, current_Y + 2, current_X + 1, current_Y + 1)) {
-                possibleCaptures.add(pawns[current_X + 1][current_Y - 1]);
-                movesAfterCapture.put(current_X + 2, current_Y - 2);
-
-                return searchCapturingMove(pawn, current_X += 2, current_Y -=2);
-
-            }
-            if (pawn.isKing()) {
-                if (isValidCapture(pawn,current_X, current_Y, current_X - 2, current_Y + 2, current_X - 1, current_Y + 1)) {
-                    possibleCaptures.add(pawns[current_X - 1][current_Y + 1]);
-                    movesAfterCapture.put(current_X - 2, current_Y + 2);
-
-                    return searchCapturingMove(pawn, current_X -= 2, current_Y +=2);
-                }
-                if (isValidCapture(pawn,current_X, current_Y, current_X - 2, current_Y - 2, current_X - 1, current_Y - 1)) {
-                    possibleCaptures.add(pawns[current_X - 1][current_Y - 1]);
-                    movesAfterCapture.put(current_X - 2, current_Y - 2);
-
-                    return searchCapturingMove(pawn, current_X -= 2, current_Y -=2);
-                }
-            }
-        }
-
-        if(pawn.getColor() == Color.WHITE){
-            if (isValidCapture(pawn,current_X, current_Y, current_X - 2, current_Y - 2, current_X - 1, current_Y - 1)) {
-                possibleCaptures.add(pawns[current_X - 1][current_Y - 1]);
-                movesAfterCapture.put(current_X - 2, current_Y - 2);
-
-                return searchCapturingMove(pawn, current_X -= 2, current_Y -=2);
-            }
+            //forward left
             if (isValidCapture(pawn,current_X, current_Y, current_X - 2, current_Y + 2, current_X - 1, current_Y + 1)) {
-                possibleCaptures.add(pawns[current_X - 1][current_Y + 1]);
+
+                Pawn tempLeft = new Pawn(current_X, current_Y+2, currentPlayer); //Pawn :(
+
+                if(isValidCapture(tempLeft, tempLeft.getX(), tempLeft.getY(), tempLeft.getX()+2, tempLeft.getY()+2, tempLeft.getX()+1, tempLeft.getY()+1)){
+                    movesAfterCapture.put(current_X, current_Y+2);
+                    capturedPawns.add(pawns[current_Y+2+1][current_X+1]); //NEXT
+
+                    capturedPawns.add(pawns[tempLeft.getY()-1][tempLeft.getX()+1]); //PREVIOUS
+                    movesAfterCapture.put(tempLeft.getX()+2, tempLeft.getY()+2);
+                    //movesAfterCapture.put(tempLeft.getX(), tempLeft.getY()); //todo add not put
+                    System.out.println("new movesAfterCapture[ " + (tempLeft.getX()-2) + ", " + (tempLeft.getY()+2) + " ]");
+                    int tempcurrent_X = tempLeft.getX();
+                    int tempcurrent_Y = tempLeft.getY();
+                    return searchCapturingMove(pawn, tempcurrent_X +=2, tempcurrent_Y += 2);
+                }
+
+                capturedPawns.add(pawns[current_Y + 1][current_X - 1]);
+                movesAfterCapture.put(current_X - 2, current_Y + 2);
+
+                return searchCapturingMove(pawn, current_X -= 2, current_Y +=2);
+
+            }
+
+            if (isValidCapture(pawn,current_X, current_Y, current_X - 2, current_Y + 2, current_X - 1, current_Y + 1)) {
+
+                Pawn tempLeft = new Pawn(current_X, current_Y+2, currentPlayer); //Pawn :(
+
+                if(isValidCapture(tempLeft, tempLeft.getX(), tempLeft.getY(), tempLeft.getX()-2, tempLeft.getY()+2, tempLeft.getX()-1, tempLeft.getY()+1)){
+                    movesAfterCapture.put(current_X, current_Y+2);
+                    capturedPawns.add(pawns[current_Y+2+1][current_X-1]);
+
+                    capturedPawns.add(pawns[tempLeft.getY()-1][tempLeft.getX()+1]);
+                    movesAfterCapture.put(tempLeft.getX()-2, tempLeft.getY()+2);
+                    //movesAfterCapture.put(tempLeft.getX(), tempLeft.getY()); //todo add not put
+                    System.out.println("new movesAfterCapture[ " + (tempLeft.getX()-2) + ", " + (tempLeft.getY()+2) + " ]");
+                    int tempcurrent_X = tempLeft.getX();
+                    int tempcurrent_Y = tempLeft.getY();
+                    return searchCapturingMove(pawn, tempcurrent_X -=2, tempcurrent_Y += 2);
+                }
+
+                capturedPawns.add(pawns[current_X - 1][current_Y + 1]);
                 movesAfterCapture.put(current_X - 2, current_Y + 2);
 
                 return searchCapturingMove(pawn, current_X -= 2, current_Y +=2);
             }
-            if (pawn.isKing()) {
-                if (isValidCapture(pawn,current_X, current_Y, current_X + 2, current_Y - 2, current_X + 1, current_Y - 1)) {
-                    possibleCaptures.add(pawns[current_X + 1][current_Y - 1]);
-                    movesAfterCapture.put(current_X + 2, current_Y - 2);
+            if (isValidCapture(pawn,current_X, current_Y, current_X - 2, current_Y - 2, current_X - 1, current_Y - 1)) {
 
-                    return searchCapturingMove(pawn, current_X += 2, current_Y -=2);
-                }
-                if (isValidCapture(pawn,current_X, current_Y, current_X + 2, current_Y + 2, current_X + 1, current_Y + 1)) {
-                    possibleCaptures.add(pawns[current_X + 1][current_Y + 1]);
-                    movesAfterCapture.put(current_X + 2, current_Y + 2);
+                Pawn tempLeft = new Pawn(current_X, current_Y+2, currentPlayer); //Pawn :(
 
-                    return searchCapturingMove(pawn, current_X += 2, current_Y +=2);
+                if(isValidCapture(tempLeft, tempLeft.getX(), tempLeft.getY(), tempLeft.getX()-2, tempLeft.getY()+2, tempLeft.getX()-1, tempLeft.getY()+1)){
+                    movesAfterCapture.put(current_X, current_Y+2);
+                    capturedPawns.add(pawns[current_Y+2+1][current_X-1]);
+
+                    capturedPawns.add(pawns[tempLeft.getY()-1][tempLeft.getX()+1]);
+                    movesAfterCapture.put(tempLeft.getX()-2, tempLeft.getY()+2);
+                    //movesAfterCapture.put(tempLeft.getX(), tempLeft.getY()); //todo add not put
+                    System.out.println("new movesAfterCapture[ " + (tempLeft.getX()-2) + ", " + (tempLeft.getY()+2) + " ]");
+                    int tempcurrent_X = tempLeft.getX();
+                    int tempcurrent_Y = tempLeft.getY();
+                    return searchCapturingMove(pawn, tempcurrent_X -=2, tempcurrent_Y += 2);
                 }
+
+                capturedPawns.add(pawns[current_X - 1][current_Y - 1]);
+                movesAfterCapture.put(current_X - 2, current_Y - 2);
+
+                return searchCapturingMove(pawn, current_X -= 2, current_Y -=2);
             }
         }
-        if(possibleCaptures.isEmpty())
+
+
+
+
+        if(capturedPawns.isEmpty())
             return 0;
 
         return 1;
@@ -367,10 +419,10 @@ public class Board extends JPanel{
     private void findCapturingMove(Pawn pawn) {
         int current_X = pawn.getX();
         int current_Y = pawn.getY();
-        //List<Pawn> possibleCaptures = new ArrayList<>();
+        //List<Pawn> capturedPawns = new ArrayList<>();
         searchCapturingMove(pawn, current_X, current_Y);
 
-        //return possibleCaptures;
+        //return capturedPawns;
     }
 
     private boolean isValidCapture(Pawn piece, int current_X, int current_Y, int new_X, int new_Y, int captured_X, int captured_Y) {
@@ -393,18 +445,11 @@ public class Board extends JPanel{
         //     }
         // }
 
-        // if (!piece.isKing()) {
-        //     if (piece.getColor() == Color.BLACK && rowDiff > 0) {
-        //         return false;
-        //     }
-        //     if (piece.getColor() == Color.WHITE && rowDiff < 0) {
-        //         return false;
-        //     }
+        // if((Math.abs(X_Diff) == Math.abs(Y_Diff)) && (Math.abs(X_Diff - Y_Diff) == Y_Diff*2)){
+        //     movesAfterCapture.put(new_X, new_X);
+        //     System.out.println("lol" + current_X + ", " +  current_Y);
         // }
-        if((Math.abs(X_Diff) == Math.abs(Y_Diff)) && (Math.abs(X_Diff - Y_Diff) == Y_Diff*2)){
-            movesAfterCapture.put(new_X, new_X);
-            System.out.println("lol" + current_X + ", " +  current_Y);
-        }
+
         return Math.abs(X_Diff) == Math.abs(Y_Diff);//Math.abs(rowDiff) == 2 && Math.abs(colDiff) == 2;
     }
 
@@ -475,23 +520,28 @@ public class Board extends JPanel{
             g.drawRect(selectedX * 50, selectedY * 50, 50, 50);
 
             g.setColor(Color.GREEN);
-            for (int row = 0; row < 8; row++) {
-                for (int col = 0; col < 8; col++) {
-                    if (isValidMove(selectedPawn, row, col)) {
-                        g.drawRect(col * 50, row * 50, 50, 50);
+            if(movesAfterCapture.isEmpty()){
+                for (int row = 0; row < 8; row++) {
+                    for (int col = 0; col < 8; col++) {
+                        if (isValidMove(selectedPawn, row, col)) {
+                            g.drawRect(col * 50, row * 50, 50, 50);
+                        }
                     }
                 }
+            } else{
+                g.setColor(Color.RED);
+                int captureX;
+                int captureY;
+                for(Map.Entry<Integer, Integer> cords : movesAfterCapture.entrySet()){
+                    captureY = cords.getValue();
+                    captureX = cords.getKey();
+                    System.out.println("draw[ " + captureX + ", " + captureY + " ]");
+                    g.drawRect(captureX*50, captureY*50, 50, 50);
+                }
+                g.setColor(Color.GREEN);
             }
-            g.setColor(Color.RED);
-            int captureX;
-            int captureY;
-            for(Map.Entry<Integer, Integer> cords : movesAfterCapture.entrySet()){
-                captureY = cords.getValue();
-                captureX = cords.getKey();
-                System.out.println("draw[ " + captureX + ", " + captureY + " ]");
-                g.drawRect(captureX*50, captureY*50, 50, 50);
-            }
-            g.setColor(Color.GREEN);
+
+
         }
 
 
