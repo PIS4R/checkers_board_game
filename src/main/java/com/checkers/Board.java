@@ -34,6 +34,10 @@ import java.awt.event.MouseEvent;
 public class Board extends JPanel{
 
 
+    final static int DOWN_RIGHT = 0;
+    final static int DOWN_LEFT = 1;
+    final static int UP_RIGHT = 2;
+    final static int UP_LEFT = 3;
 	//private Game game;
     private MainWindow window;
     private boolean COLOR;
@@ -54,6 +58,9 @@ public class Board extends JPanel{
     //Map<Integer, Integer> movesAfterCapture;
     ArrayList<int[]> movesAfterCapture;
 
+    ArrayList<Node> nodesInCapture;
+
+
 
     List<int[]> maxCapturePath = new ArrayList<>();
     List<int[]> capturePath = new ArrayList<>();
@@ -73,6 +80,8 @@ public class Board extends JPanel{
         capturedPawns = new ArrayList<>();
         //movesAfterCapture = new HashMap<>();
         movesAfterCapture = new ArrayList<int[]>();
+
+        nodesInCapture = new ArrayList<Node>();
 
         tiles = new Tile[8][8];
         pawns = new Pawn[8][8];
@@ -127,6 +136,15 @@ public class Board extends JPanel{
                             }
                         }
                         repaint();
+
+                        System.out.println("\n            nodes in capture            \n");
+
+                        for (Node node : nodesInCapture) {
+                            int coordsRow = node.node_X;
+                            int coordsCol = node.node_Y;
+                            System.out.println("Row: " + coordsRow + ", Col: " + coordsCol);
+                        }
+
                         System.out.println("\n\n");
 
                     }
@@ -214,12 +232,12 @@ public class Board extends JPanel{
         // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
         // pawns[5][6] = new Pawn(6, 5, Color.WHITE);
 
-        /////////////////////////////
+                        // TESTS //
 
-        pawns[6][1] = new Pawn(1, 6, Color.WHITE);
-        pawns[4][3] = new Pawn(3, 4, Color.WHITE);
-        pawns[4][1] = new Pawn(1, 4, Color.WHITE);
-        pawns[1][0] = new Pawn(0, 1, Color.BLACK);
+        // pawns[6][1] = new Pawn(1, 6, Color.WHITE);
+        // pawns[4][3] = new Pawn(3, 4, Color.WHITE);
+        // pawns[4][1] = new Pawn(1, 4, Color.WHITE);
+        // pawns[1][0] = new Pawn(0, 1, Color.BLACK);
 
 
         // pawns[0][5] = new Pawn(5, 0, Color.BLACK);
@@ -237,13 +255,13 @@ public class Board extends JPanel{
         // pawns[5][2] = new Pawn(2, 5, Color.WHITE);
         // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
 
-        // pawns[0][5] = new Pawn(5, 0, Color.BLACK);
-        // pawns[1][6] = new Pawn(6, 1, Color.WHITE);
-        // pawns[3][6] = new Pawn(6, 3, Color.WHITE);
-        // pawns[5][6] = new Pawn(6, 5, Color.WHITE);
-        // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
-        // pawns[5][2] = new Pawn(2, 5, Color.WHITE);
-        // pawns[3][0] = new Pawn(0, 3, Color.WHITE);
+        pawns[0][5] = new Pawn(5, 0, Color.BLACK);
+        pawns[1][6] = new Pawn(6, 1, Color.WHITE);
+        pawns[3][6] = new Pawn(6, 3, Color.WHITE);
+        pawns[5][6] = new Pawn(6, 5, Color.WHITE);
+        pawns[5][4] = new Pawn(4, 5, Color.WHITE);
+        pawns[5][2] = new Pawn(2, 5, Color.WHITE);
+        pawns[3][0] = new Pawn(0, 3, Color.WHITE);
 
 
 
@@ -371,50 +389,63 @@ public class Board extends JPanel{
 
     private Integer searchCapturingMove(Pawn pawn, int current_X, int current_Y) {
 
+        Node new_node = new Node(current_X, current_Y);
 
-            //down-right
-            if (isValidCapture(pawn, current_X, current_Y, current_X + 2, current_Y + 2, current_X + 1, current_Y + 1)) {
+        //down-right
+        if (isValidCapture(pawn, current_X, current_Y, current_X + 2, current_Y + 2, current_X + 1, current_Y + 1)) {
 
 
-                capturedPawns.add(pawns[current_Y + 1][current_X + 1]);
-                int[] temp = {current_X + 2, current_Y + 2};
-                movesAfterCapture.add(temp);
-                //System.out.println("right3 capturedPawn added[ " + pawns[current_Y + 1][current_X + 1].getX() + " " + pawns[current_Y + 1][current_X + 1].getY() + " ]");
+            new_node.setDirection(current_X + 2, current_Y + 2, DOWN_RIGHT);
+            nodesInCapture.add(new_node);
 
-                return searchCapturingMove(pawn, current_X += 2, current_Y +=2);
+            capturedPawns.add(pawns[current_Y + 1][current_X + 1]);
+            int[] temp = {current_X + 2, current_Y + 2};
+            movesAfterCapture.add(temp);
+            //System.out.println("right3 capturedPawn added[ " + pawns[current_Y + 1][current_X + 1].getX() + " " + pawns[current_Y + 1][current_X + 1].getY() + " ]");
 
-            }
+            return searchCapturingMove(pawn, current_X += 2, current_Y +=2);
 
-            //down-left
-            if (isValidCapture(pawn,current_X, current_Y, current_X - 2, current_Y + 2, current_X - 1, current_Y + 1)) {
+        }
 
-                capturedPawns.add(pawns[current_Y + 1][current_X - 1]);
-                int[] temp = {current_X - 2, current_Y + 2};
-                movesAfterCapture.add(temp);
+        //down-left
+        if (isValidCapture(pawn,current_X, current_Y, current_X - 2, current_Y + 2, current_X - 1, current_Y + 1)) {
 
-                return searchCapturingMove(pawn, current_X -= 2, current_Y +=2);
+            new_node.setDirection(current_X - 2, current_Y + 2, DOWN_LEFT);
+            nodesInCapture.add(new_node);
 
-            }
-            //up-right
-            if (isValidCapture(pawn,current_X, current_Y, current_X + 2, current_Y - 2, current_X + 1, current_Y - 1)) {
+            capturedPawns.add(pawns[current_Y + 1][current_X - 1]);
+            int[] temp = {current_X - 2, current_Y + 2};
+            movesAfterCapture.add(temp);
 
-                capturedPawns.add(pawns[current_Y - 1][current_X + 1]);
-                int[] temp = {current_X + 2, current_Y - 2};
-                movesAfterCapture.add(temp);
+            return searchCapturingMove(pawn, current_X -= 2, current_Y +=2);
 
-                return searchCapturingMove(pawn, current_X += 2, current_Y -=2);
+        }
+        //up-right
+        if (isValidCapture(pawn,current_X, current_Y, current_X + 2, current_Y - 2, current_X + 1, current_Y - 1)) {
 
-            }
+            new_node.setDirection(current_X + 2, current_Y - 2, UP_RIGHT);
+            nodesInCapture.add(new_node);
 
-            //up-left
-            if (isValidCapture(pawn,current_X, current_Y, current_X - 2, current_Y - 2, current_X - 1, current_Y - 1)) {
+            capturedPawns.add(pawns[current_Y - 1][current_X + 1]);
+            int[] temp = {current_X + 2, current_Y - 2};
+            movesAfterCapture.add(temp);
 
-                    capturedPawns.add(pawns[current_Y - 1][current_X - 1]);
-                    int[] temp = {current_X - 2, current_Y - 2};
-                    movesAfterCapture.add(temp);
+            return searchCapturingMove(pawn, current_X += 2, current_Y -=2);
 
-                    return searchCapturingMove(pawn, current_X -= 2, current_Y -=2);
-            }
+        }
+
+        //up-left
+        if (isValidCapture(pawn,current_X, current_Y, current_X - 2, current_Y - 2, current_X - 1, current_Y - 1)) {
+
+            new_node.setDirection(current_X - 2, current_Y - 2, UP_RIGHT);
+            nodesInCapture.add(new_node);
+
+            capturedPawns.add(pawns[current_Y - 1][current_X - 1]);
+            int[] temp = {current_X - 2, current_Y - 2};
+            movesAfterCapture.add(temp);
+
+            return searchCapturingMove(pawn, current_X -= 2, current_Y -=2);
+        }
 
 
         //334, 404
@@ -423,6 +454,8 @@ public class Board extends JPanel{
         if(capturedPawns.isEmpty())
             return 0;
 
+
+        nodesInCapture.add(new_node);
         return 1;
 
     }
