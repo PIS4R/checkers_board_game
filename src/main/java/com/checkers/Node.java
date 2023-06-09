@@ -27,6 +27,27 @@ public class Node {
     }
 
 
+    public int setDirectionEmpty(int direction){
+        if(direction < 0 || direction > 3)
+            return 1;
+
+        switch(direction){
+            case(DOWN_RIGHT): //down-right
+                directions.add(DOWN_RIGHT, null);
+                break;
+            case(DOWN_LEFT): //down-left
+                directions.add(DOWN_LEFT, null);
+                break;
+            case(UP_RIGHT): //up-right
+                directions.add(UP_RIGHT, null);
+                break;
+            case(UP_LEFT): //up-left
+                directions.add(UP_LEFT, null);
+                break;
+        }
+        return 0;
+    }
+
     public int setDirection(int newNode_x, int  newNode_y, int direction){
         if(direction < 0 || direction > 3)
             return 1;
