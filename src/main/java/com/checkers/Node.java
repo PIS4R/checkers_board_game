@@ -21,9 +21,16 @@ public class Node {
 
         node_X = x;
         node_Y = y;
-        directions = new ArrayList<int[]>();
-        initDirections();
+        int[] coords = new int[2];
 
+        directions = new ArrayList<int[]>();
+        directions.add(coords);
+        directions.add(coords);
+        directions.add(coords);
+        directions.add(coords);
+
+        //initDirections();
+        int p = 0;
     }
 
 
@@ -33,16 +40,16 @@ public class Node {
 
         switch(direction){
             case(DOWN_RIGHT): //down-right
-                directions.add(DOWN_RIGHT, null);
+                directions.set(DOWN_RIGHT, null);
                 break;
             case(DOWN_LEFT): //down-left
-                directions.add(DOWN_LEFT, null);
+                directions.set(DOWN_LEFT, null);
                 break;
             case(UP_RIGHT): //up-right
-                directions.add(UP_RIGHT, null);
+                directions.set(UP_RIGHT, null);
                 break;
             case(UP_LEFT): //up-left
-                directions.add(UP_LEFT, null);
+                directions.set(UP_LEFT, null);
                 break;
         }
         return 0;
@@ -52,36 +59,44 @@ public class Node {
         if(direction < 0 || direction > 3)
             return 1;
 
-        int coords[] = {0, 0};
+        int coords[] = new int[2];
         coords[0] = newNode_x;
         coords[1] = newNode_y;
 
         switch(direction){
             case(DOWN_RIGHT): //down-right
-                directions.add(DOWN_RIGHT, coords);
+                directions.set(DOWN_RIGHT, coords);
                 break;
             case(DOWN_LEFT): //down-left
-                directions.add(DOWN_LEFT, coords);
+                directions.set(DOWN_LEFT, coords);
                 break;
             case(UP_RIGHT): //up-right
-                directions.add(UP_RIGHT, coords);
+                directions.set(UP_RIGHT, coords);
                 break;
             case(UP_LEFT): //up-left
-                directions.add(UP_LEFT, coords);
+                directions.set(UP_LEFT, coords);
                 break;
         }
         return 0;
     }
 
     private void initDirections(){
-        directions.add(DOWN_RIGHT, null);
-        directions.add(DOWN_LEFT, null);
-        directions.add(UP_RIGHT, null);
-        directions.add(UP_LEFT, null);
+        int[] temp = new int[2];
+        temp[0] = 0;
+        temp[1] = 0;
+
+        directions.set(DOWN_RIGHT, temp);
+        directions.set(DOWN_LEFT, temp);
+        directions.set(UP_RIGHT, temp);
+        directions.set(UP_LEFT, temp);
     }
 
     public boolean isDirectionEmpty(int direction){
         if(directions.get(direction) == null){
+            //System.out.println("directions of a node [" + this.node_X+','+this.node_Y+"] = "+ directions.get(direction));
+            if(directions.get(direction) != null)
+                System.out.println(directions.get(direction)[0]+','+directions.get(direction)[1]);
+
             return true;
         }
         return false;

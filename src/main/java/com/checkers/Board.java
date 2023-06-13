@@ -247,21 +247,24 @@ public class Board extends JPanel{
         // pawns[7][4] = new Pawn(4, 7, Color.WHITE);
         // pawns[3][6] = new Pawn(6, 3, Color.WHITE);
 
-        // pawns[0][7] = new Pawn(7, 0, Color.BLACK);
-        // pawns[1][6] = new Pawn(6, 1, Color.WHITE);
-        // pawns[1][4] = new Pawn(4, 1, Color.WHITE);
-        // pawns[1][2] = new Pawn(2, 1, Color.WHITE);
-        // pawns[3][2] = new Pawn(2, 3, Color.WHITE);
-        // pawns[5][2] = new Pawn(2, 5, Color.WHITE);
-        // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
-
-        pawns[0][5] = new Pawn(5, 0, Color.BLACK);
+        pawns[0][7] = new Pawn(7, 0, Color.BLACK);
         pawns[1][6] = new Pawn(6, 1, Color.WHITE);
-        pawns[3][6] = new Pawn(6, 3, Color.WHITE);
-        pawns[5][6] = new Pawn(6, 5, Color.WHITE);
-        pawns[5][4] = new Pawn(4, 5, Color.WHITE);
+        pawns[1][4] = new Pawn(4, 1, Color.WHITE);
+        pawns[1][2] = new Pawn(2, 1, Color.WHITE);
+        pawns[3][2] = new Pawn(2, 3, Color.WHITE);
         pawns[5][2] = new Pawn(2, 5, Color.WHITE);
-        pawns[3][0] = new Pawn(0, 3, Color.WHITE);
+        pawns[5][4] = new Pawn(4, 5, Color.WHITE);
+        pawns[5][6] = new Pawn(6, 5, Color.WHITE);
+        pawns[3][4] = new Pawn(4, 3, Color.WHITE);
+
+
+        // pawns[0][5] = new Pawn(5, 0, Color.BLACK);
+        // pawns[1][6] = new Pawn(6, 1, Color.WHITE);
+        // pawns[3][6] = new Pawn(6, 3, Color.WHITE);
+        // pawns[5][6] = new Pawn(6, 5, Color.WHITE);
+        // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
+        // pawns[5][2] = new Pawn(2, 5, Color.WHITE);
+        // pawns[3][0] = new Pawn(0, 3, Color.WHITE);
 
 
 
@@ -405,6 +408,8 @@ public class Board extends JPanel{
 
             return searchCapturingMove(pawn, current_X += 2, current_Y +=2, nodesInCapture);
 
+        } else{
+            //new_node.setDirectionEmpty(DOWN_RIGHT);
         }
 
         //down-left
@@ -419,6 +424,8 @@ public class Board extends JPanel{
 
             return searchCapturingMove(pawn, current_X -= 2, current_Y +=2, nodesInCapture);
 
+        }else{
+            //new_node.setDirectionEmpty(DOWN_LEFT);
         }
         //up-right
         if (isValidCapture(pawn,current_X, current_Y, current_X + 2, current_Y - 2, current_X + 1, current_Y - 1, nodesInCapture)) {
@@ -432,12 +439,14 @@ public class Board extends JPanel{
 
             return searchCapturingMove(pawn, current_X += 2, current_Y -=2, nodesInCapture);
 
+        }else{
+            //new_node.setDirectionEmpty(UP_RIGHT);
         }
 
         //up-left
         if (isValidCapture(pawn,current_X, current_Y, current_X - 2, current_Y - 2, current_X - 1, current_Y - 1, nodesInCapture)) {
 
-            new_node.setDirection(current_X - 2, current_Y - 2, UP_RIGHT);
+            new_node.setDirection(current_X - 2, current_Y - 2, UP_LEFT);
             nodesInCapture.add(new_node);
 
             capturedPawns.add(pawns[current_Y - 1][current_X - 1]);
@@ -445,6 +454,8 @@ public class Board extends JPanel{
             movesAfterCapture.add(temp);
 
             return searchCapturingMove(pawn, current_X -= 2, current_Y -=2, nodesInCapture);
+        } else{
+            //new_node.setDirectionEmpty(UP_LEFT);
         }
 
 
@@ -468,14 +479,18 @@ public class Board extends JPanel{
         searchCapturingMove(pawn, current_X, current_Y, maxNodesInCapture);
 
         for(Node node : maxNodesInCapture){
-            for(int direction = DOWN_RIGHT; direction <= UP_RIGHT; direction++){
+            for(int direction = DOWN_RIGHT; direction <= UP_LEFT; direction++){
                 if(!node.isDirectionEmpty(direction)){
                     Pawn tempPawn = new Pawn(node.node_X, node.node_Y, currentPlayer);
                     ArrayList<Node> tempNodesInCapture = new ArrayList<Node>();
 
                     searchCapturingMove(tempPawn, node.node_X, node.node_Y, tempNodesInCapture);
                     if(tempNodesInCapture.size() > maxNodesInCapture.size()){
-                        maxNodesInCapture = tempNodesInCapture; //hmm
+                        maxNodesInCapture.clear();
+                        for(Node temp_node : tempNodesInCapture){
+                            maxNodesInCapture.add(temp_node);
+                        }
+                        //maxNodesInCapture = tempNodesInCapture; //hmm
                     }
                 }
             }
@@ -726,10 +741,15 @@ public class Board extends JPanel{
                 //     System.out.println("draw[ " + captureX + ", " + captureY + " ]");
                 //     g.drawRect(captureX*50, captureY*50, 50, 50);
                 // }
-                for (int[] coords : movesAfterCapture) {
-                    captureX = coords[0];
-                    captureY = coords[1];
-                    g.drawRect(captureX*50, captureY*50, 50, 50);
+
+
+                // for (int[] coords : movesAfterCapture) {
+                //     captureX = coords[0];
+                //     captureY = coords[1];
+                //     g.drawRect(captureX*50, captureY*50, 50, 50);
+                // }
+                for(Node node : maxNodesInCapture){ //draw only maxCapture path
+                    g.drawRect(node.node_X*50, node.node_Y*50, 50,50);
                 }
 
 
