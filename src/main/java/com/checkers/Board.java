@@ -60,8 +60,8 @@ public class Board extends JPanel {
 
     ArrayList<Node> maxNodesInCapture;
 
-    static List<int[]> maxCapturePath = new ArrayList<>(20);
-    List<int[]> capturePath = new ArrayList<>(20);
+    static List<int[]> maxCapturePath = new ArrayList<>();
+    List<int[]> capturePath = new ArrayList<>();
 
 
 
@@ -94,8 +94,8 @@ public class Board extends JPanel {
         setTiles();
         setPawns();
 
-        maxCapturePath = new ArrayList<>();
-        capturePath = new ArrayList<>();
+        //maxCapturePath = new ArrayList<>();
+        //capturePath = new ArrayList<>();
 
 
         maxMaxCapturePath = new ArrayList<>();
@@ -136,36 +136,58 @@ public class Board extends JPanel {
                     }
                 } else { // perform a move
 
-                    if (!maxCapturePath.isEmpty()) { //capture
 
-                        performMove(selectedPawn, row, col);
-                        checkForKing(selectedPawn);
-                        for(List<Pawn> list : maxMaxCapturedPawns){
-                            for (Pawn pawn : list){
-                                pawns[pawn.getY()][pawn.getX()] = null;
+                    //if(maxMaxCapturePath.get(maxMaxCapturePath.size() -1).indexOf(coords) ==
+
+                    if (!maxMaxCapturePath.isEmpty()) { //capture
+
+                        for(List<int[]> list : maxMaxCapturePath){
+                            if(list.size() != 1){
+                                if(row == list.get(list.size() - 1)[1] &&
+                                col == list.get(list.size() - 1)[0]){
+                                    performMove(selectedPawn, row, col);
+                                    checkForKing(selectedPawn);
+                                    for(List<Pawn> listOfPawns : maxMaxCapturedPawns){
+                                        for (Pawn pawn : listOfPawns){
+                                            pawns[pawn.getY()][pawn.getX()] = null;
+                                        }
+                                    }
+                                    checkForGameOver();
+                                    selectedPawn = null;
+                                    //switchPlayer();
+                                }
+                            }
+                            else{
+                                if(row == list.get(0)[1] &&
+                                col == list.get(0)[0]){
+                                    performMove(selectedPawn, row, col);
+                                    checkForKing(selectedPawn);
+                                    for(List<Pawn> listOfPawns : maxMaxCapturedPawns){
+                                        for (Pawn pawn : listOfPawns){
+                                            pawns[pawn.getY()][pawn.getX()] = null;
+                                        }
+                                    }
+                                    checkForGameOver();
+                                    selectedPawn = null;
+                                    //switchPlayer();
+                                }
                             }
                         }
 
-
-                        checkForGameOver();
-                        selectedPawn = null;
-                        switchPlayer();
-                        checkForAvaibileCaptures(currentPlayer);
                     } else { //normal move
                         if (isValidMove(selectedPawn, row, col)) {
                             performMove(selectedPawn, row, col);
                             checkForKing(selectedPawn);
                             checkForGameOver();
                             selectedPawn = null;
-                            switchPlayer();
-                            checkForAvaibileCaptures(currentPlayer); //!
+                            //checkForAvaibileCaptures(currentPlayer);
                             repaint();
 
                         } else {
                             selectedPawn = pawns[row][col];
                         }
                     }
-
+                    switchPlayer();
                     repaint();
                 }
             }
@@ -383,9 +405,10 @@ public class Board extends JPanel {
     public void checkForAvaibileCaptures(Color currentPlayer){
 
         maxCapturePath.clear();
+        maxMaxCapturePath.removeAll(maxMaxCapturePath);
+        maxMaxCapturedPawns.removeAll(maxMaxCapturedPawns);
         pawnsWithAvaibileCaptures.removeAll(pawnsWithAvaibileCaptures);
         int maxCapture = 0;
-        //pawnsWithAvaibileCaptures.add(null);
 
         for(int j = 0; j < 8; j++){
             for(int i = 0; i < 8; i++){
@@ -637,6 +660,8 @@ public class Board extends JPanel {
 
     private void switchPlayer() {
         currentPlayer = (currentPlayer == Color.BLACK ? Color.WHITE : Color.BLACK);
+        checkForAvaibileCaptures(currentPlayer);
+
     }
 
     @Override
