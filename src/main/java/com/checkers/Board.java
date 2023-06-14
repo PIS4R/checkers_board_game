@@ -60,12 +60,13 @@ public class Board extends JPanel {
 
     ArrayList<Node> maxNodesInCapture;
 
-    List<int[]> maxCapturePath = new ArrayList<>();
-    List<int[]> capturePath = new ArrayList<>();
+    static List<int[]> maxCapturePath = new ArrayList<>(20);
+    List<int[]> capturePath = new ArrayList<>(20);
 
 
-    List<int[]> maxMaxCapturePath;
-    List<Pawn> maxMaxCapturedPawns;
+
+    List<List<int[]>> maxMaxCapturePath;
+    List<List<Pawn>> maxMaxCapturedPawns;
 
     List<Pawn> pawnsWithAvaibileCaptures = new ArrayList<>();
 
@@ -98,6 +99,7 @@ public class Board extends JPanel {
 
 
         maxMaxCapturePath = new ArrayList<>();
+
         maxMaxCapturedPawns = new ArrayList<>();
 
 
@@ -138,11 +140,12 @@ public class Board extends JPanel {
 
                         performMove(selectedPawn, row, col);
                         checkForKing(selectedPawn);
-
-                        for (Pawn pawn : maxMaxCapturedPawns){
-                            pawns[pawn.getY()][pawn.getX()] = null;
-
+                        for(List<Pawn> list : maxMaxCapturedPawns){
+                            for (Pawn pawn : list){
+                                pawns[pawn.getY()][pawn.getX()] = null;
+                            }
                         }
+
 
                         checkForGameOver();
                         selectedPawn = null;
@@ -252,7 +255,12 @@ public class Board extends JPanel {
         // pawns[2][3] = new Pawn(3, 2, Color.BLACK);
         // pawns[4][5] = new Pawn(5, 4, Color.WHITE);
 
+
+        // pawns[2][3] = new Pawn(3, 2, Color.BLACK);
         // pawns[4][3] = new Pawn(3, 4, Color.WHITE);
+        // pawns[4][5] = new Pawn(5, 4, Color.WHITE);
+
+
 
     }
 
@@ -386,14 +394,28 @@ public class Board extends JPanel {
 
                     if(subMaxCapture > maxCapture){
                         pawnsWithAvaibileCaptures.removeAll(pawnsWithAvaibileCaptures);
+                        maxMaxCapturePath.removeAll(maxMaxCapturePath);
+                        maxMaxCapturedPawns.removeAll(maxMaxCapturedPawns);
 
                         pawnsWithAvaibileCaptures.add(pawns[j][i]);
                         maxCapture = subMaxCapture;
-                        maxMaxCapturePath = maxCapturePath;
-                        maxMaxCapturedPawns = maxCapturedPawns;
+
+                        List<int[]> temp = new ArrayList<>();
+                        for(int[] coords : maxCapturePath){
+                            temp.add(coords);
+                        }
+
+                        maxMaxCapturePath.add(temp);
+                        maxMaxCapturedPawns.add(maxCapturedPawns);
                     }
                     else if(subMaxCapture == maxCapture && maxCapture != 0){
                         pawnsWithAvaibileCaptures.add(pawns[j][i]);
+                        List<int[]> temp = new ArrayList<>();
+                        for(int[] coords : maxCapturePath){
+                            temp.add(coords);
+                        }
+                        maxMaxCapturePath.add(temp);
+                        maxMaxCapturedPawns.add(maxCapturedPawns);
                         //todo
                     }
                 }
@@ -641,6 +663,20 @@ public class Board extends JPanel {
             g.drawRect(pawn.getX() * 50, pawn.getY() * 50, 50, 50);
             }
         }
+        if(!maxMaxCapturePath.isEmpty()){
+            g.setColor(Color.RED);
+            int captureX;
+            int captureY;
+
+            for(List<int[]> list : maxMaxCapturePath){
+                for (int[] coords : list) { // draw only maxCapture path
+                    System.out.println("list: "+coords[0]+", "+coords[1]);
+
+                    g.drawRect(coords[0] * 50, coords[1] * 50, 50, 50);
+                }
+            }
+        }
+
 
         if (selectedPawn != null) {
             g.setColor(Color.YELLOW);
@@ -659,27 +695,16 @@ public class Board extends JPanel {
                 }
 
             } else {
-                g.setColor(Color.RED);
-                int captureX;
-                int captureY;
-                // for(Map.Entry<Integer, Integer> cords : movesAfterCapture.entrySet()){
-                // captureY = cords.getValue();
-                // captureX = cords.getKey();
-                // System.out.println("draw[ " + captureX + ", " + captureY + " ]");
-                // g.drawRect(captureX*50, captureY*50, 50, 50);
-                // }
+            //     g.setColor(Color.RED);
+            //     int captureX;
+            //     int captureY;
 
-                // for (int[] coords : movesAfterCapture) {
-                // captureX = coords[0];
-                // captureY = coords[1];
-                // g.drawRect(captureX*50, captureY*50, 50, 50);
-                // }
-                for (int[] coords : maxMaxCapturePath) { // draw only maxCapture path
-
-                    g.drawRect(coords[0] * 50, coords[1] * 50, 50, 50);
-                }
-
-                g.setColor(Color.GREEN);
+            //     for(List<int[]> list : maxMaxCapturePath){
+            //         for (int[] coords : list) { // draw only maxCapture path
+            //             g.drawRect(coords[0] * 50, coords[1] * 50, 50, 50);
+            //         }
+            //     }
+            //     g.setColor(Color.GREEN);
             }
 
         }
