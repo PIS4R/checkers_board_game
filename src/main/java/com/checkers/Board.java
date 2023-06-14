@@ -120,6 +120,7 @@ public class Board extends JPanel {
                 int row = mouseY / 50;
                 int col = mouseX / 50;
 
+                //todo naprawic bugi zwiazene z odkilkaniem
                 if (selectedPawn == null) { // pick a pawn
                     if (pawns[row][col] != null && pawns[row][col].getColor() == currentPlayer) {
                         if(!maxCapturePath.isEmpty()){
@@ -208,35 +209,35 @@ public class Board extends JPanel {
     }
 
     private void setPawns() {
-        pawns[0][1] = new Pawn(1, 0, Color.BLACK);
-        pawns[0][3] = new Pawn(3, 0, Color.BLACK);
-        pawns[0][5] = new Pawn(5, 0, Color.BLACK);
-        pawns[0][7] = new Pawn(7, 0, Color.BLACK);
+        // pawns[0][1] = new Pawn(1, 0, Color.BLACK);
+        // pawns[0][3] = new Pawn(3, 0, Color.BLACK);
+        // pawns[0][5] = new Pawn(5, 0, Color.BLACK);
+        // pawns[0][7] = new Pawn(7, 0, Color.BLACK);
 
-        pawns[1][0] = new Pawn(0, 1, Color.BLACK);
-        pawns[1][2] = new Pawn(2, 1, Color.BLACK);
-        pawns[1][4] = new Pawn(4, 1, Color.BLACK);
-        pawns[1][6] = new Pawn(6, 1, Color.BLACK);
+        // pawns[1][0] = new Pawn(0, 1, Color.BLACK);
+        // pawns[1][2] = new Pawn(2, 1, Color.BLACK);
+        // pawns[1][4] = new Pawn(4, 1, Color.BLACK);
+        // pawns[1][6] = new Pawn(6, 1, Color.BLACK);
 
-        pawns[2][1] = new Pawn(1, 2, Color.BLACK);
-        pawns[2][3] = new Pawn(3, 2, Color.BLACK);
-        pawns[2][5] = new Pawn(5, 2, Color.BLACK);
-        pawns[2][7] = new Pawn(7, 2, Color.BLACK);
+        // pawns[2][1] = new Pawn(1, 2, Color.BLACK);
+        // pawns[2][3] = new Pawn(3, 2, Color.BLACK);
+        // pawns[2][5] = new Pawn(5, 2, Color.BLACK);
+        // pawns[2][7] = new Pawn(7, 2, Color.BLACK);
 
-        pawns[7][0] = new Pawn(0, 7, Color.WHITE);
-        pawns[7][2] = new Pawn(2, 7, Color.WHITE);
-        pawns[7][4] = new Pawn(4, 7, Color.WHITE);
-        pawns[7][6] = new Pawn(6, 7, Color.WHITE);
+        // pawns[7][0] = new Pawn(0, 7, Color.WHITE);
+        // pawns[7][2] = new Pawn(2, 7, Color.WHITE);
+        // pawns[7][4] = new Pawn(4, 7, Color.WHITE);
+        // pawns[7][6] = new Pawn(6, 7, Color.WHITE);
 
-        pawns[6][1] = new Pawn(1, 6, Color.WHITE);
-        pawns[6][3] = new Pawn(3, 6, Color.WHITE);
-        pawns[6][5] = new Pawn(5, 6, Color.WHITE);
-        pawns[6][7] = new Pawn(7, 6, Color.WHITE);
+        // pawns[6][1] = new Pawn(1, 6, Color.WHITE);
+        // pawns[6][3] = new Pawn(3, 6, Color.WHITE);
+        // pawns[6][5] = new Pawn(5, 6, Color.WHITE);
+        // pawns[6][7] = new Pawn(7, 6, Color.WHITE);
 
-        pawns[5][0] = new Pawn(0, 5, Color.WHITE);
-        pawns[5][2] = new Pawn(2, 5, Color.WHITE);
-        pawns[5][4] = new Pawn(4, 5, Color.WHITE);
-        pawns[5][6] = new Pawn(6, 5, Color.WHITE);
+        // pawns[5][0] = new Pawn(0, 5, Color.WHITE);
+        // pawns[5][2] = new Pawn(2, 5, Color.WHITE);
+        // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
+        // pawns[5][6] = new Pawn(6, 5, Color.WHITE);
 
         //              TESTS //
 
@@ -278,9 +279,9 @@ public class Board extends JPanel {
         // pawns[4][5] = new Pawn(5, 4, Color.WHITE);
 
 
-        // pawns[2][3] = new Pawn(3, 2, Color.BLACK);
-        // pawns[4][3] = new Pawn(3, 4, Color.WHITE);
-        // pawns[4][5] = new Pawn(5, 4, Color.WHITE);
+        pawns[6][3] = new Pawn(3, 6, Color.BLACK);
+        pawns[4][3] = new Pawn(3, 4, Color.WHITE);
+        pawns[4][5] = new Pawn(5, 4, Color.WHITE);
 
 
 
@@ -294,15 +295,9 @@ public class Board extends JPanel {
                 pawns[new_X][new_Y] != null) {
             return false;
         }
-
         if (pawn.getColor() != currentPlayer)
             return false;
 
-        // for(Map.Entry<Integer, Integer> cords : movesAfterCapture.entrySet()){
-        // if(cords.getValue() == new_X && cords.getKey() == new_Y){
-        // return true;
-        // }
-        // }
         for (int[] coords : movesAfterCapture) {
             int coordsRow = coords[0];
             int coordsCol = coords[1];
@@ -317,7 +312,7 @@ public class Board extends JPanel {
         int rowDiff = new_X - current_X;
         int colDiff = new_Y - current_Y;
 
-        // return rowDiff == colDiff;
+
         if (Math.abs(rowDiff) != Math.abs(colDiff)) {
             return false;
         }
@@ -329,6 +324,8 @@ public class Board extends JPanel {
             if (pawn.getColor() == Color.WHITE && rowDiff > 0) {
                 return false;
             }
+        }else{
+            return Math.abs(rowDiff) == Math.abs(colDiff);
         }
 
         if (Math.abs(rowDiff) == 1 && Math.abs(colDiff) == 1) {
@@ -337,11 +334,6 @@ public class Board extends JPanel {
 
         int rowDirection = rowDiff >= 0 ? 1 : -1;
         int colDirection = colDiff >= 0 ? 1 : -1;
-
-        if (colDiff < 0 || rowDiff < 0) {
-            // System.out.println("prprprp valid");
-            // return false;
-        }
 
         int midRow = current_X + rowDirection;
         int midCol = current_Y + colDirection;
@@ -368,9 +360,7 @@ public class Board extends JPanel {
                 return false;
             }
         }
-
         return false;
-
     }
 
     private void performMove(Pawn pawn, int new_X, int new_Y) {
@@ -439,7 +429,6 @@ public class Board extends JPanel {
                         }
                         maxMaxCapturePath.add(temp);
                         maxMaxCapturedPawns.add(maxCapturedPawns);
-                        //todo
                     }
                 }
             }
@@ -462,9 +451,9 @@ public class Board extends JPanel {
         maxCapturePath = capturePath;
         maxCapturedPawns = capturedPawns;
 
-        for (Pawn pawn : maxCapturedPawns) {
-            System.out.println("Captured Row: " + pawn.getX() + ", Col: " + pawn.getY());
-        }
+        // for (Pawn pawn : maxCapturedPawns) {
+        //     System.out.println("Captured Row: " + pawn.getX() + ", Col: " + pawn.getY());
+        // }
 
         return maxCapture;
     }
@@ -580,17 +569,9 @@ public class Board extends JPanel {
                     List<Pawn> subCapturedPawns = new ArrayList<>();
 
                     Pawn localPawn = new Pawn(targetRow, targetCol, currentPawn.getColor());
-                    if(targetRow == 3 && targetCol == 2){
-                        System.out.println("got u: ");
-                        // for(int[] coords: capturePath){
-                        //     System.out.println("capturePath: " + coords[0]+", "+coords[1]);
 
-                        // }
-                    }
                     // Recursively check for additional captures
                     List<int[]> subCapturePath = new ArrayList<>();
-
-
 
                     int currentCapture = 1 + getMaxCaptureForPiece(localPawn, targetRow, targetCol, subCapturePath, subCapturedPawns);
                     //System.out.println("subCapturePath: " + subCapturePath);
@@ -736,7 +717,7 @@ public class Board extends JPanel {
 
         if (gameOver) {
             g.setColor(Color.BLACK);
-            g.setFont(new Font("Arial", Font.BOLD, 40));
+            g.setFont(new Font("Arial", Font.BOLD, 20));
             String message = "Game Over! " + (winner == Color.WHITE ? "White" : "Black") + " wins!";
             int messageWidth = g.getFontMetrics().stringWidth(message);
             int x = (getWidth() - messageWidth) / 2;
