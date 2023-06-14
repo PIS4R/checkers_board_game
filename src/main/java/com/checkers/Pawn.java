@@ -24,6 +24,14 @@ class Pawn {
     public Color getColor() {
         return this.color;
     }
+    public Color getEnemyColor(Color color) {
+        if(color == Color.WHITE){
+            return Color.BLACK;
+        }
+        else{
+            return Color.WHITE;
+        }
+    }
     public void setColor(Color newColor) {
         this.color = newColor;
     }

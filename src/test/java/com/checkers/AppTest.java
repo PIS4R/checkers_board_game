@@ -1,5 +1,5 @@
 package com.checkers;
-
+//package checkers.src.test.java.com.checkers;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
