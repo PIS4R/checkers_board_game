@@ -7,6 +7,9 @@ class Pawn {
     private int y;
     private Color color;
     private boolean isKing;
+    public Pawn(Pawn pawnCopy){
+        this(pawnCopy.x, pawnCopy.y, pawnCopy.color);
+    }
 
     public Pawn(int x, int y, Color color) {
         this.x = x;
@@ -50,7 +53,10 @@ class Pawn {
     public void makeKing() {
         isKing = true;
     }
-
+    public Pawn makeKingFrom(Pawn pawn) {
+        pawn.isKing = true;
+        return pawn;
+    }
 
     public void draw(Graphics g, int tileSize) {
         int xOffset = tileSize / 4;
