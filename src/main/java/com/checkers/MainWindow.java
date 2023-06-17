@@ -80,7 +80,7 @@ public class MainWindow extends JFrame {
         //layout.setLayout(null); //paint
         //setLayout(new GridLayout(8,8));
         setSize( 400, 439 );
-        setTitle( "Test Grid" );
+        setTitle( "Checkers" );
         board = new Board(this, width, height);
         add( board );
         //pack();
