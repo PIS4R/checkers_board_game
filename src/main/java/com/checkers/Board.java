@@ -113,9 +113,14 @@ public class Board extends JPanel {
             if (game.maxCapturePath.isEmpty()) {
                 for (int row = 0; row < 8; row++) {
                     for (int col = 0; col < 8; col++) {
-                        if (game.isValidMove(game.selectedPawn, row, col)) {
-                            g.drawRect(col * 50, row * 50, 50, 50);
-                        }
+                        if(game.selectedPawn.isKing()){
+                            if (game.isValidMove(game.selectedPawn, col, row)) {
+                                g.drawRect(row * 50, col * 50, 50, 50);
+                            }
+                        }else
+                            if (game.isValidMove(game.selectedPawn, row, col)) {
+                                g.drawRect(col * 50, row * 50, 50, 50);
+                            }
                     }
                 }
 

@@ -109,7 +109,7 @@ public class Game {
                 //todo naprawic bugi zwiazene z odkilkaniem
                 if (selectedPawn == null) { // pick a pawn
                     if (pawns[row][col] != null && pawns[row][col].getColor() == currentPlayer) {
-                        //System.out.println("is king:"+pawns[row][col].isKing());
+                        System.out.println("is king:"+pawns[row][col].isKing());
                         if(!maxMaxCapturePath.isEmpty()){ //TODO MAXMAX
                             for(Pawn pawn: pawnsWithAvaibileCaptures){
                                 if(pawns[row][col] == pawn){
@@ -192,18 +192,18 @@ public class Game {
     }
 
     public void setPawns() {
-        pawns[0][1] = new Pawn(1, 0, Color.BLACK);
-        pawns[0][3] = new Pawn(3, 0, Color.BLACK);
+        // pawns[0][1] = new Pawn(1, 0, Color.BLACK);
+        // pawns[0][3] = new Pawn(3, 0, Color.BLACK);
         // pawns[0][5] = new Pawn(5, 0, Color.BLACK);
         // pawns[0][7] = new Pawn(7, 0, Color.BLACK);
 
-        pawns[1][0] = new Pawn(0, 1, Color.BLACK);
-        pawns[1][2] = new Pawn(2, 1, Color.BLACK);
+        // pawns[1][0] = new Pawn(0, 1, Color.BLACK);
+        // pawns[1][2] = new Pawn(2, 1, Color.BLACK);
         // pawns[1][4] = new Pawn(4, 1, Color.BLACK);
         // pawns[1][6] = new Pawn(6, 1, Color.BLACK);
 
-        pawns[2][1] = new Pawn(1, 2, Color.BLACK);
-        pawns[2][3] = new Pawn(3, 2, Color.BLACK);
+        // pawns[2][1] = new Pawn(1, 2, Color.BLACK);
+        // pawns[2][3] = new Pawn(3, 2, Color.BLACK);
         // pawns[2][5] = new Pawn(5, 2, Color.BLACK);
         // pawns[2][7] = new Pawn(7, 2, Color.BLACK);
 
@@ -214,13 +214,13 @@ public class Game {
 
         // pawns[6][1] = new Pawn(1, 6, Color.WHITE);
         // pawns[6][3] = new Pawn(3, 6, Color.WHITE);
-        pawns[6][5] = new Pawn(5, 6, Color.WHITE);
-        pawns[6][7] = new Pawn(7, 6, Color.WHITE);
+        // pawns[6][5] = new Pawn(5, 6, Color.WHITE);
+        // pawns[6][7] = new Pawn(7, 6, Color.WHITE);
 
         // pawns[5][0] = new Pawn(0, 5, Color.WHITE);
         // pawns[5][2] = new Pawn(2, 5, Color.WHITE);
-        pawns[5][4] = new Pawn(4, 5, Color.WHITE);
-        pawns[5][6] = new Pawn(6, 5, Color.WHITE);
+        // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
+        // pawns[5][6] = new Pawn(6, 5, Color.WHITE);
 
         //              TESTS //
 
@@ -377,35 +377,54 @@ public class Game {
         // pawns[1][0] = new Pawn(0, 1, Color.BLACK);
         // pawns[0][1] = new Pawn(1, 0, Color.BLACK);
 
+        pawns[3][2] = new Pawn(2, 3, Color.WHITE);
+        pawns[5][0] = new Pawn(0, 5, Color.WHITE);
+
+        Pawn temp = new Pawn(4, 1, Color.BLACK);
+        temp.makeKing();
+        pawns[1][4] = temp;
+
     }
 
     public boolean isValidMove(Pawn pawn, int new_X, int new_Y) {
         if (new_X < 0 || new_X >= 8 ||
-                new_Y < 0 || new_Y >= 8 ||
-                pawns[new_X][new_Y] != null) {
+                new_Y < 0 || new_Y >= 8) { //!!!!
             return false;
         }
+        if(pawns[new_X][new_Y] != null) return false; //!pawn.isKing()&&
+        //else if(pawn.isKing()&&pawns[new_Y][new_X] != null) return false;
         if (pawn.getColor() != currentPlayer)
             return false;
 
-        for (int[] coords : movesAfterCapture) {
-            int coordsRow = coords[0];
-            int coordsCol = coords[1];
-            if (coordsRow == new_X && coordsCol == new_Y) {
-                return true;
-            }
-        }
+        // for (int[] coords : movesAfterCapture) {
+        //     int coordsRow = coords[0];
+        //     int coordsCol = coords[1];
+        //     if (coordsRow == new_X && coordsCol == new_Y) {
+        //         return true;
+        //     }
+        // }
 
         int current_X = pawn.getY();
         int current_Y = pawn.getX();
-
+        if(pawn.isKing()){
+            // current_Y = pawn.getY();
+            // current_X = pawn.getX();
+        }
         int rowDiff = new_X - current_X;
         int colDiff = new_Y - current_Y;
-
-
-        if (Math.abs(rowDiff) != Math.abs(colDiff)) {
-            return false;
+        if(pawn.isKing()){
+            // rowDiff = new_X - current_X;
+            // colDiff = new_Y - current_Y;
         }
+        int rowDirection = rowDiff >= 0 ? 1 : -1;
+        int colDirection = colDiff >= 0 ? 1 : -1;
+        if(pawn.isKing()){
+            // rowDirection = colDiff >= 0 ? 1 : -1;
+            // colDirection = rowDiff >= 0 ? 1 : -1;
+        }
+        // if (Math.abs(rowDiff) != Math.abs(colDiff)) {
+        //     return false;
+        // }
 
         if (!pawn.isKing()) {
             if (pawn.getColor() == Color.BLACK && rowDiff < 0) {
@@ -415,15 +434,28 @@ public class Game {
                 return false;
             }
         }else{
-            return Math.abs(rowDiff) == Math.abs(colDiff);
+
+            if(Math.abs(rowDiff) == Math.abs(colDiff)){
+                int check_new_X = new_X-rowDirection;
+                int check_new_Y = new_Y-colDirection;
+                int pawn_counter = 0;
+                while(check_new_X!=current_X&&check_new_Y!=current_Y){
+                    if((check_new_X>7) || (check_new_X<0) || check_new_Y>7 || check_new_Y<0) return false;
+                    if(pawns[check_new_X][check_new_Y] != null)
+                        pawn_counter++;
+                    check_new_X -= rowDirection;
+                    check_new_Y -= colDirection;
+                }
+                if(pawn_counter == 0) return true;
+                else return false;
+            }
         }
 
         if (Math.abs(rowDiff) == 1 && Math.abs(colDiff) == 1) {
             return true;
         }
 
-        int rowDirection = rowDiff >= 0 ? 1 : -1;
-        int colDirection = colDiff >= 0 ? 1 : -1;
+        if(pawn.isKing()) return false;
 
         int midRow = current_X + rowDirection;
         int midCol = current_Y + colDirection;
