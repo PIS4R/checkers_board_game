@@ -30,7 +30,6 @@ public class Node {
         directions.add(coords);
 
         //initDirections();
-        int p = 0;
     }
 
 
