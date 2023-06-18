@@ -81,7 +81,7 @@ public class Board extends JPanel {
         this.height = height;
         this.window = window;
 
-        currentPlayer = Color.BLACK;
+        currentPlayer = Color.WHITE;
         gameOver = false;
         capturingMoveAvailable = false;
         capturedPawns = new ArrayList<>();
@@ -162,7 +162,10 @@ public class Board extends JPanel {
                                         pawns[pawn.getY()][pawn.getX()] = null;
                                     }
                                     checkForGameOver();
+                                    checkForKing(pawns[row][col]);
+
                                     selectedPawn = null;
+                                    break;
                                     //switchPlayer();
                                 }
                             }
@@ -179,12 +182,16 @@ public class Board extends JPanel {
                                     for(Pawn pawn : maxMaxCapturedPawns.get(maxMaxCapturePath.indexOf(list))){ //maxMaxCapturedPawns
                                         pawns[pawn.getY()][pawn.getX()] = null;
                                     }
+                                    checkForGameOver();
+                                    checkForKing(pawns[row][col]);
+
                                     selectedPawn = null;
+                                    break;
                                     //switchPlayer();
                                 }
                             }
                         }
-
+                        maxMaxCapturePath.clear();
                     } else { //normal move
                         if (isValidMove(selectedPawn, row, col)) {
                             performMove(selectedPawn, row, col);
@@ -197,8 +204,8 @@ public class Board extends JPanel {
                             selectedPawn = pawns[row][col];
                         }
                     }
+                    checkForKing(pawns[row][col]);
 
-                    //checkForKing(pawns[row][col]);
                     repaint();
                     checkForGameOver();
                     switchPlayer();
@@ -224,35 +231,35 @@ public class Board extends JPanel {
     }
 
     private void setPawns() {
-        // pawns[0][1] = new Pawn(1, 0, Color.BLACK);
-        // pawns[0][3] = new Pawn(3, 0, Color.BLACK);
-        // pawns[0][5] = new Pawn(5, 0, Color.BLACK);
-        // pawns[0][7] = new Pawn(7, 0, Color.BLACK);
+        pawns[0][1] = new Pawn(1, 0, Color.BLACK);
+        pawns[0][3] = new Pawn(3, 0, Color.BLACK);
+        pawns[0][5] = new Pawn(5, 0, Color.BLACK);
+        pawns[0][7] = new Pawn(7, 0, Color.BLACK);
 
-        // pawns[1][0] = new Pawn(0, 1, Color.BLACK);
-        // pawns[1][2] = new Pawn(2, 1, Color.BLACK);
-        // pawns[1][4] = new Pawn(4, 1, Color.BLACK);
-        // pawns[1][6] = new Pawn(6, 1, Color.BLACK);
+        pawns[1][0] = new Pawn(0, 1, Color.BLACK);
+        pawns[1][2] = new Pawn(2, 1, Color.BLACK);
+        pawns[1][4] = new Pawn(4, 1, Color.BLACK);
+        pawns[1][6] = new Pawn(6, 1, Color.BLACK);
 
-        // pawns[2][1] = new Pawn(1, 2, Color.BLACK);
-        // pawns[2][3] = new Pawn(3, 2, Color.BLACK);
-        // pawns[2][5] = new Pawn(5, 2, Color.BLACK);
-        // pawns[2][7] = new Pawn(7, 2, Color.BLACK);
+        pawns[2][1] = new Pawn(1, 2, Color.BLACK);
+        pawns[2][3] = new Pawn(3, 2, Color.BLACK);
+        pawns[2][5] = new Pawn(5, 2, Color.BLACK);
+        pawns[2][7] = new Pawn(7, 2, Color.BLACK);
 
-        // pawns[7][0] = new Pawn(0, 7, Color.WHITE);
-        // pawns[7][2] = new Pawn(2, 7, Color.WHITE);
-        // pawns[7][4] = new Pawn(4, 7, Color.WHITE);
-        // pawns[7][6] = new Pawn(6, 7, Color.WHITE);
+        pawns[7][0] = new Pawn(0, 7, Color.WHITE);
+        pawns[7][2] = new Pawn(2, 7, Color.WHITE);
+        pawns[7][4] = new Pawn(4, 7, Color.WHITE);
+        pawns[7][6] = new Pawn(6, 7, Color.WHITE);
 
-        // pawns[6][1] = new Pawn(1, 6, Color.WHITE);
-        // pawns[6][3] = new Pawn(3, 6, Color.WHITE);
-        // pawns[6][5] = new Pawn(5, 6, Color.WHITE);
-        // pawns[6][7] = new Pawn(7, 6, Color.WHITE);
+        pawns[6][1] = new Pawn(1, 6, Color.WHITE);
+        pawns[6][3] = new Pawn(3, 6, Color.WHITE);
+        pawns[6][5] = new Pawn(5, 6, Color.WHITE);
+        pawns[6][7] = new Pawn(7, 6, Color.WHITE);
 
-        // pawns[5][0] = new Pawn(0, 5, Color.WHITE);
-        // pawns[5][2] = new Pawn(2, 5, Color.WHITE);
-        // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
-        // pawns[5][6] = new Pawn(6, 5, Color.WHITE);
+        pawns[5][0] = new Pawn(0, 5, Color.WHITE);
+        pawns[5][2] = new Pawn(2, 5, Color.WHITE);
+        pawns[5][4] = new Pawn(4, 5, Color.WHITE);
+        pawns[5][6] = new Pawn(6, 5, Color.WHITE);
 
         //              TESTS //
 
@@ -361,14 +368,27 @@ public class Board extends JPanel {
 
 
 
-        Pawn temp =  new Pawn(0, 7, Color.BLACK);
-        temp.makeKing();
-        pawns[7][0] = temp;
-        pawns[5][2] = new Pawn(2, 5, Color.WHITE);
-        pawns[3][4] = new Pawn(4, 3, Color.WHITE);
-        pawns[1][6] = new Pawn(6, 1, Color.WHITE);
-        pawns[5][4] = new Pawn(4, 5, Color.WHITE);
-        pawns[5][6] = new Pawn(6, 5, Color.WHITE);
+        // Pawn temp =  new Pawn(0, 7, Color.BLACK);
+        // temp.makeKing();
+        // pawns[7][0] = temp;
+        // pawns[5][2] = new Pawn(2, 5, Color.WHITE);
+        // pawns[3][4] = new Pawn(4, 3, Color.WHITE);
+        // pawns[1][6] = new Pawn(6, 1, Color.WHITE);
+        // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
+        // pawns[5][6] = new Pawn(6, 5, Color.WHITE);
+
+        // Pawn temp =  new Pawn(0, 7, Color.BLACK);
+        // temp.makeKing();
+        // pawns[7][0] = temp;
+        // pawns[3][4] = new Pawn(4, 3, Color.WHITE);
+        // pawns[1][0] = new Pawn(0, 1, Color.WHITE);
+
+
+        // Pawn temp =  new Pawn(3, 0, Color.WHITE);
+        // temp.makeKing();
+        // pawns[0][3] = temp;
+        // pawns[1][2] = new Pawn(2, 1, Color.BLACK);
+
 
 
     }
