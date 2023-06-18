@@ -373,6 +373,27 @@ public class Board extends JPanel {
         // pawns[5][6] = new Pawn(6, 5, Color.WHITE);
         // pawns[6][1] = new Pawn(1, 6, Color.BLACK);
 
+        // pawns[2][1] = new Pawn(1, 2, Color.WHITE);
+        // pawns[0][3] = new Pawn(3, 0, Color.BLACK);
+        // pawns[5][6] = new Pawn(6, 5, Color.WHITE);
+        // pawns[6][1] = new Pawn(1, 6, Color.BLACK);
+
+        // pawns[2][1] = new Pawn(1, 2, Color.BLACK);
+        // pawns[5][0] = new Pawn(0, 5, Color.WHITE);
+        // pawns[7][0] = new Pawn(0, 7, Color.WHITE);
+        // pawns[6][1] = new Pawn(1, 6, Color.WHITE);
+        // pawns[6][5] = new Pawn(5, 6, Color.WHITE);
+
+        // pawns[1][6] = new Pawn(6, 1, Color.WHITE);
+        // Pawn temp = new Pawn(6, 7, Color.BLACK);
+        // temp.makeKing();
+        // pawns[7][6] = temp;
+        // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
+        // pawns[3][2] = new Pawn(2, 3, Color.WHITE);
+        // pawns[3][0] = new Pawn(0, 3, Color.WHITE);
+        // pawns[7][1] = new Pawn(1, 7, Color.WHITE);
+        // pawns[1][0] = new Pawn(0, 1, Color.BLACK);
+        // pawns[0][1] = new Pawn(1, 0, Color.BLACK);
 
     }
 
@@ -482,20 +503,19 @@ public class Board extends JPanel {
 
     public int getMaxKingCapture(Pawn king) {
         int maxCapture = 0;
-        List<int[]> maxKingCapturePath = new ArrayList<>();
-
-
         if (king.getColor() == currentPlayer && king.isKing()) {
-            //List<int[]> kingCapturePath = new ArrayList<>();
-            int kingX = king.getX();
-            int kingY = king.getY();
+            // int kingX = king.getX();
+            // int kingY = king.getY();
             //pawns[kingY][kingX] = null;
-            //System.out.println("king max capture: " + maxCapture);
-            //int currentCapture = 1;
+
             // maxCapturedPawns.clear();
             // maxCapturePath.clear();
             // capturePath.clear();
             // capturedPawns.clear();
+            // capturePathForKing.clear();
+            // capturedPawnsByKing.clear();
+            // maxCapturePathForKing.clear();
+            // maxCapturedPawnsByKing.clear();
             // capturePathForKing.clear();
             // capturedPawnsByKing.clear();
             // maxCapturePathForKing.clear();
@@ -505,13 +525,8 @@ public class Board extends JPanel {
             int currentCapture = getMaxCaptureForKing(king, king, king.getX(), king.getY(), capturePath, capturedPawns);
             //pawns[kingY][kingX] = king;
             //pawns[kingY][kingX].makeKing();
-
-
-            //System.out.println("king current capture: " + (currentCapture)+"the king max capture"+maxCapture);
-
             if (currentCapture > maxCapture) {
                 maxCapture = currentCapture;
-                //maxKingCapturePath = capturePath;
                 repaint();
             }
         }
@@ -528,18 +543,6 @@ public class Board extends JPanel {
                 //System.out.println("PATHlistOfPaths: "+capturedPawn1[0]+", "+capturedPawn1[1]);
             }
         }
-        // Print the coordinates of the path
-        // for (int[] coords : capturePath) {
-        //     int row = coords[0];
-        //     int col = coords[1];
-        //     //System.out.println("king path: " + row + ", Col: " + col);
-        // }
-        // for (Pawn pawn : capturedPawns) {
-        //     //System.out.println("king captured : " + pawn.getX() + ", Col: " + pawn.getY());
-        // }
-
-        //System.out.println("King path Row: " + targetRow + ", Col: " + targetCol);
-
 
         return maxCapture;
     }
@@ -770,27 +773,21 @@ public class Board extends JPanel {
         return Math.abs(X_Diff) == Math.abs(Y_Diff);
         //return true;
     }
-    public void correctCapturePathAndPawns(){
-        // if(capturedPawns.size() > maxCapturedPawns.size()){
-        //     maxCapturedPawns.remove(maxCapturedPawns);
-        //     maxCapturePath.remove(maxCapturePath);
-        // }
-
-        // for(Pawn tempCapturedPawn : capturedPawns){
-        //     maxCapturedPawns.add(tempCapturedPawn);
-        // }
-        // for(int[] coords : capturePath){
-        //     maxCapturePath.add(coords);
-        // }
-    }
 
     public void checkForAvaibileCaptures(Color currentPlayer){
-
-        maxCapturePath.clear();
-        maxMaxCapturePath.removeAll(maxMaxCapturePath);
-        maxMaxCapturedPawns.removeAll(maxMaxCapturedPawns);
-        pawnsWithAvaibileCaptures.removeAll(pawnsWithAvaibileCaptures);
         int maxCapture = 0;
+        maxCapturePath.clear();
+        maxCapturedPawns.clear();
+        // maxMaxCapturePath.removeAll(maxMaxCapturePath);
+        // maxMaxCapturedPawns.removeAll(maxMaxCapturedPawns);
+        // pawnsWithAvaibileCaptures.removeAll(pawnsWithAvaibileCaptures);
+        maxMaxCapturePath.clear();
+        maxMaxCapturedPawns.clear();
+        pawnsWithAvaibileCaptures.clear();
+        capturePathForKing.clear();
+        capturedPawnsByKing.clear();
+        maxCapturePathForKing.clear();
+        maxCapturedPawnsByKing.clear();
 
         for(int j = 0; j < 8; j++){
             for(int i = 0; i < 8; i++){
@@ -810,16 +807,16 @@ public class Board extends JPanel {
                                 maxMaxCapturePath.add(captures);
                             for(List<Pawn> pawnsToCapture : maxCapturedPawnsByKing)
                                 maxMaxCapturedPawns.add(pawnsToCapture);
+                            kingMultiCaptures=false;
                         } else{
                             List<int[]> temp = new ArrayList<>();
                             for(int[] coords : maxCapturePath){
                                 temp.add(coords);
                             }
-
                             maxMaxCapturePath.add(temp);
                             maxMaxCapturedPawns.add(maxCapturedPawns);
                         }
-                        kingMultiCaptures=false;
+
                     }
                     else if(subMaxCapture == maxCapture && maxCapture != 0){
                         pawnsWithAvaibileCaptures.add(pawns[j][i]);
@@ -828,6 +825,7 @@ public class Board extends JPanel {
                                 maxMaxCapturePath.add(captures);
                             for(List<Pawn> pawnsToCapture : maxCapturedPawnsByKing)
                                 maxMaxCapturedPawns.add(pawnsToCapture);
+                            kingMultiCaptures=false;
                         } else{
                             List<int[]> temp = new ArrayList<>();
                             for(int[] coords : maxCapturePath){
@@ -836,22 +834,24 @@ public class Board extends JPanel {
                             maxMaxCapturePath.add(temp);
                             maxMaxCapturedPawns.add(maxCapturedPawns);
                         }
+                    } else{
+                        // maxCapturePath.clear();
+                        // maxCapturedPawns.clear();
+                        // pawnsWithAvaibileCaptures.clear();
+                        if(capturedPawnsByKing.size()!=0){
+                            capturedPawnsByKing.clear();
+                        }
+                        capturePathForKing.clear();
+                        maxCapturePathForKing.clear();
+                        maxCapturedPawnsByKing.clear();
                     }
                 }
             }
         }
-        //System.out.println("max capture is: " + maxMaxCapturePath + "\n");
-        for (int[] coords : maxCapturePath) {
-            int coordsRow = coords[0];
-            int coordsCol = coords[1];
-            //System.out.println("Row: " + coordsRow + ", Col: " + coordsCol);
-        }
-
     }
 
     public int getMaxCapture(Pawn currentPawn) {
         int maxCapture = 0;
-        kingMultiCaptures = false;
         if(!currentPawn.isKing()){
             int currentCapture = getMaxCaptureForPiece(currentPawn, currentPawn.getX(), currentPawn.getY(), capturePath,
             capturedPawns);
@@ -862,17 +862,11 @@ public class Board extends JPanel {
         } else{
             int currentCapture = getMaxKingCapture(currentPawn);
             maxCapture = currentCapture;
-            //System.out.println("king max capture: " + (currentCapture));
-            //maxCapturePath = capturePathForKing;
 
             if(capturePath!=null)
                 maxCapturePath = capturePath;
             if(capturedPawns!=null)
                 maxCapturedPawns = capturedPawns;
-            for(Pawn p : capturedPawnsByKing){
-                System.out.println("ppppp "+p.getX()+", "+p.getY());
-            }
-            //maxCapturedPawns = capturedPawnsByKing;
         }
 
 
