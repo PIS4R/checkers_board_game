@@ -148,7 +148,15 @@ public class Board extends JPanel {
             int y = getHeight() / 2;
             g.drawString(message, x, y);
         }
-
+        if (game.gameDraw) {
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Arial", Font.BOLD, 20));
+            String message = "Draw!";
+            int messageWidth = g.getFontMetrics().stringWidth(message);
+            int x = (getWidth() - messageWidth) / 2;
+            int y = getHeight() / 2;
+            g.drawString(message, x, y);
+        }
     }
 
 }

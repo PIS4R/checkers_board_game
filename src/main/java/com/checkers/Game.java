@@ -59,6 +59,7 @@ public class Game {
     List<List<Pawn>> maxMaxCapturedPawns;
 
     List<Pawn> pawnsWithAvaibileCaptures = new ArrayList<>();
+    int movesWithKings;
 
 
     public Game(Board board, int width, int height) {
@@ -72,6 +73,7 @@ public class Game {
         currentPlayer = Color.BLACK;
         gameOver = false;
         gameDraw = false;
+        movesWithKings = 0;
         capturingMoveAvailable = false;
         capturedPawns = new ArrayList<>();
         maxCapturedPawns = new ArrayList<>();
@@ -115,7 +117,7 @@ public class Game {
                         System.out.println("is king:"+pawns[row][col].isKing());
                         if(!maxMaxCapturePath.isEmpty()){ //TODO MAXMAX
                             for(Pawn pawn: pawnsWithAvaibileCaptures){
-                                if(pawns[row][col] == pawn){
+                                if(col==pawn.getX()&&row==pawn.getY()){ //pawns[row][col] == pawn
                                     selectedPawn = pawns[row][col];
                                     selectedPawn.setColor(currentPlayer);
                                 }
@@ -133,12 +135,14 @@ public class Game {
                                 if(row == list.get(list.size() - 1)[1] &&
                                 col == list.get(list.size() - 1)[0]){
                                     performMove(selectedPawn, row, col);
+
                                     //checkForKing(pawns[row][col]);
                                     for(Pawn pawn : maxMaxCapturedPawns.get(maxMaxCapturePath.indexOf(list))){ //maxMaxCapturedPawns
                                         pawns[pawn.getY()][pawn.getX()] = null;
                                     }
                                     checkForGameOver();
                                     checkForKing(pawns[row][col]);
+                                    movesWithKings=0;
 
                                     selectedPawn = null;
                                     break;
@@ -154,6 +158,7 @@ public class Game {
                                     }
                                     checkForGameOver();
                                     checkForKing(pawns[row][col]);
+                                    movesWithKings=0;
 
                                     selectedPawn = null;
                                     break;
@@ -165,6 +170,10 @@ public class Game {
                     } else { //normal move
                         if (isValidMove(selectedPawn, row, col)) {
                             performMove(selectedPawn, row, col);
+                            if(selectedPawn.isKing())
+                                movesWithKings++;
+                            else
+                                movesWithKings=0;
                             checkForGameOver();
                             selectedPawn = null;
                             //checkForAvaibileCaptures(currentPlayer);
@@ -177,7 +186,7 @@ public class Game {
                     checkForKing(pawns[row][col]);
                     board.repaint();
                     checkForGameOver();
-                    //checkForDraw();
+                    checkForDraw();
                     switchPlayer();
                     checkforBlock();
                     checkForAvaibileCaptures(currentPlayer);
@@ -197,35 +206,35 @@ public class Game {
     }
 
     public void setPawns() {
-        // pawns[0][1] = new Pawn(1, 0, Color.BLACK);
-        // pawns[0][3] = new Pawn(3, 0, Color.BLACK);
-        // pawns[0][5] = new Pawn(5, 0, Color.BLACK);
-        // pawns[0][7] = new Pawn(7, 0, Color.BLACK);
+        pawns[0][1] = new Pawn(1, 0, Color.BLACK);
+        pawns[0][3] = new Pawn(3, 0, Color.BLACK);
+        pawns[0][5] = new Pawn(5, 0, Color.BLACK);
+        pawns[0][7] = new Pawn(7, 0, Color.BLACK);
 
-        // pawns[1][0] = new Pawn(0, 1, Color.BLACK);
-        // pawns[1][2] = new Pawn(2, 1, Color.BLACK);
-        // pawns[1][4] = new Pawn(4, 1, Color.BLACK);
-        // pawns[1][6] = new Pawn(6, 1, Color.BLACK);
+        pawns[1][0] = new Pawn(0, 1, Color.BLACK);
+        pawns[1][2] = new Pawn(2, 1, Color.BLACK);
+        pawns[1][4] = new Pawn(4, 1, Color.BLACK);
+        pawns[1][6] = new Pawn(6, 1, Color.BLACK);
 
-        // pawns[2][1] = new Pawn(1, 2, Color.BLACK);
-        // pawns[2][3] = new Pawn(3, 2, Color.BLACK);
-        // pawns[2][5] = new Pawn(5, 2, Color.BLACK);
-        // pawns[2][7] = new Pawn(7, 2, Color.BLACK);
+        pawns[2][1] = new Pawn(1, 2, Color.BLACK);
+        pawns[2][3] = new Pawn(3, 2, Color.BLACK);
+        pawns[2][5] = new Pawn(5, 2, Color.BLACK);
+        pawns[2][7] = new Pawn(7, 2, Color.BLACK);
 
-        // pawns[7][0] = new Pawn(0, 7, Color.WHITE);
-        // pawns[7][2] = new Pawn(2, 7, Color.WHITE);
-        // pawns[7][4] = new Pawn(4, 7, Color.WHITE);
-        // pawns[7][6] = new Pawn(6, 7, Color.WHITE);
+        pawns[7][0] = new Pawn(0, 7, Color.WHITE);
+        pawns[7][2] = new Pawn(2, 7, Color.WHITE);
+        pawns[7][4] = new Pawn(4, 7, Color.WHITE);
+        pawns[7][6] = new Pawn(6, 7, Color.WHITE);
 
-        // pawns[6][1] = new Pawn(1, 6, Color.WHITE);
-        // pawns[6][3] = new Pawn(3, 6, Color.WHITE);
-        // pawns[6][5] = new Pawn(5, 6, Color.WHITE);
-        // pawns[6][7] = new Pawn(7, 6, Color.WHITE);
+        pawns[6][1] = new Pawn(1, 6, Color.WHITE);
+        pawns[6][3] = new Pawn(3, 6, Color.WHITE);
+        pawns[6][5] = new Pawn(5, 6, Color.WHITE);
+        pawns[6][7] = new Pawn(7, 6, Color.WHITE);
 
-        // pawns[5][0] = new Pawn(0, 5, Color.WHITE);
-        // pawns[5][2] = new Pawn(2, 5, Color.WHITE);
-        // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
-        // pawns[5][6] = new Pawn(6, 5, Color.WHITE);
+        pawns[5][0] = new Pawn(0, 5, Color.WHITE);
+        pawns[5][2] = new Pawn(2, 5, Color.WHITE);
+        pawns[5][4] = new Pawn(4, 5, Color.WHITE);
+        pawns[5][6] = new Pawn(6, 5, Color.WHITE);
 
         //              TESTS //
 
@@ -253,7 +262,7 @@ public class Game {
         // pawns[5][4] = new Pawn(4, 5, Color.WHITE);
         // pawns[5][6] = new Pawn(6, 5, Color.WHITE);
         // pawns[3][4] = new Pawn(4, 3, Color.WHITE);
-
+        //WHAAAT
         // pawns[0][5] = new Pawn(5, 0, Color.BLACK);
         // pawns[1][6] = new Pawn(6, 1, Color.WHITE);
         // pawns[3][6] = new Pawn(6, 3, Color.WHITE);
@@ -262,7 +271,7 @@ public class Game {
         // pawns[5][2] = new Pawn(2, 5, Color.WHITE);
         // pawns[3][2] = new Pawn(2, 3, Color.WHITE);
         // pawns[3][0] = new Pawn(0, 3, Color.WHITE);
-
+        //WHAAAT
         // pawns[0][5] = new Pawn(5, 0, Color.BLACK);
         // pawns[1][6] = new Pawn(6, 1, Color.WHITE);
         // pawns[1][4] = new Pawn(4, 1, Color.WHITE);
@@ -385,23 +394,29 @@ public class Game {
         // pawns[3][2] = new Pawn(2, 3, Color.WHITE);
         // pawns[5][0] = new Pawn(0, 5, Color.WHITE);
 
+        //DRAW CHECK
         // Pawn temp = new Pawn(4, 1, Color.BLACK);
         // temp.makeKing();
         // pawns[1][4] = temp;
 
-        pawns[0][7] = new Pawn(7, 0, Color.WHITE);
-        pawns[0][5] = new Pawn(5, 0, Color.BLACK);
-        pawns[2][5] = new Pawn(5, 2, Color.BLACK);
+        // Pawn temp2 = new Pawn(6, 1, Color.WHITE);
+        // temp2.makeKing();
+        // pawns[1][6] = temp2;
+        //DRAW CHECK
 
-
+        //BLOCK CHECK
+        // pawns[0][7] = new Pawn(7, 0, Color.WHITE);
+        // pawns[0][5] = new Pawn(5, 0, Color.BLACK);
+        // pawns[2][5] = new Pawn(5, 2, Color.BLACK);
+        //BLOCK CHECK
     }
 
     public boolean isValidMove(Pawn pawn, int new_X, int new_Y) {
         if (new_X < 0 || new_X >= 8 ||
-                new_Y < 0 || new_Y >= 8) { //!!!!
+                new_Y < 0 || new_Y >= 8) {
             return false;
         }
-        if(pawns[new_X][new_Y] != null) return false; //!pawn.isKing()&&
+        if(pawns[new_X][new_Y] != null) return false;
         //else if(pawn.isKing()&&pawns[new_Y][new_X] != null) return false;
         if (pawn.getColor() != currentPlayer)
             return false;
@@ -1033,6 +1048,15 @@ public class Game {
             winner = Color.WHITE;
         return true;
     }
+    private boolean checkForDraw(){
+        if(movesWithKings == 30){
+            gameDraw = true;
+            winner = null;
+            return true;
+        }
+        return false;
+    }
+
 
     private boolean canPawnMove(Pawn pawn) {
         int direction = (pawn.getColor() == Color.BLACK) ? 1 : -1;
