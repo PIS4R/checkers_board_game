@@ -110,7 +110,7 @@ public class Game {
                 if (selectedPawn == null) { // pick a pawn
                     if (pawns[row][col] != null && pawns[row][col].getColor() == currentPlayer) {
                         //System.out.println("is king:"+pawns[row][col].isKing());
-                        if(!maxCapturePath.isEmpty()){ //TODO MAXMAX
+                        if(!maxMaxCapturePath.isEmpty()){ //TODO MAXMAX
                             for(Pawn pawn: pawnsWithAvaibileCaptures){
                                 if(pawns[row][col] == pawn){
                                     selectedPawn = pawns[row][col];
@@ -194,31 +194,31 @@ public class Game {
     public void setPawns() {
         pawns[0][1] = new Pawn(1, 0, Color.BLACK);
         pawns[0][3] = new Pawn(3, 0, Color.BLACK);
-        pawns[0][5] = new Pawn(5, 0, Color.BLACK);
-        pawns[0][7] = new Pawn(7, 0, Color.BLACK);
+        // pawns[0][5] = new Pawn(5, 0, Color.BLACK);
+        // pawns[0][7] = new Pawn(7, 0, Color.BLACK);
 
         pawns[1][0] = new Pawn(0, 1, Color.BLACK);
         pawns[1][2] = new Pawn(2, 1, Color.BLACK);
-        pawns[1][4] = new Pawn(4, 1, Color.BLACK);
-        pawns[1][6] = new Pawn(6, 1, Color.BLACK);
+        // pawns[1][4] = new Pawn(4, 1, Color.BLACK);
+        // pawns[1][6] = new Pawn(6, 1, Color.BLACK);
 
         pawns[2][1] = new Pawn(1, 2, Color.BLACK);
         pawns[2][3] = new Pawn(3, 2, Color.BLACK);
-        pawns[2][5] = new Pawn(5, 2, Color.BLACK);
-        pawns[2][7] = new Pawn(7, 2, Color.BLACK);
+        // pawns[2][5] = new Pawn(5, 2, Color.BLACK);
+        // pawns[2][7] = new Pawn(7, 2, Color.BLACK);
 
-        pawns[7][0] = new Pawn(0, 7, Color.WHITE);
-        pawns[7][2] = new Pawn(2, 7, Color.WHITE);
-        pawns[7][4] = new Pawn(4, 7, Color.WHITE);
-        pawns[7][6] = new Pawn(6, 7, Color.WHITE);
+        // pawns[7][0] = new Pawn(0, 7, Color.WHITE);
+        // pawns[7][2] = new Pawn(2, 7, Color.WHITE);
+        // pawns[7][4] = new Pawn(4, 7, Color.WHITE);
+        // pawns[7][6] = new Pawn(6, 7, Color.WHITE);
 
-        pawns[6][1] = new Pawn(1, 6, Color.WHITE);
-        pawns[6][3] = new Pawn(3, 6, Color.WHITE);
+        // pawns[6][1] = new Pawn(1, 6, Color.WHITE);
+        // pawns[6][3] = new Pawn(3, 6, Color.WHITE);
         pawns[6][5] = new Pawn(5, 6, Color.WHITE);
         pawns[6][7] = new Pawn(7, 6, Color.WHITE);
 
-        pawns[5][0] = new Pawn(0, 5, Color.WHITE);
-        pawns[5][2] = new Pawn(2, 5, Color.WHITE);
+        // pawns[5][0] = new Pawn(0, 5, Color.WHITE);
+        // pawns[5][2] = new Pawn(2, 5, Color.WHITE);
         pawns[5][4] = new Pawn(4, 5, Color.WHITE);
         pawns[5][6] = new Pawn(6, 5, Color.WHITE);
 
@@ -510,19 +510,20 @@ public class Game {
                 board.repaint();
             }
         }
+        subKings.clear();
 
-        for(List<Pawn> listOfPawns : maxCapturedPawnsByKing){
-            System.out.println("NEW");
-            for(Pawn capturedPawn1 : listOfPawns){
-                //System.out.println("PAWNlistOfPawns: "+capturedPawn1.getX()+", "+capturedPawn1.getY());
-            }
-        }
-        for(List<int[]> listOfPaths : maxCapturePathForKing){
-            System.out.println("NEW");
-            for(int[] capturedPawn1 : listOfPaths){
-                //System.out.println("PATHlistOfPaths: "+capturedPawn1[0]+", "+capturedPawn1[1]);
-            }
-        }
+        // for(List<Pawn> listOfPawns : maxCapturedPawnsByKing){
+        //     System.out.println("NEW");
+        //     for(Pawn capturedPawn1 : listOfPawns){
+        //         //System.out.println("PAWNlistOfPawns: "+capturedPawn1.getX()+", "+capturedPawn1.getY());
+        //     }
+        // }
+        // for(List<int[]> listOfPaths : maxCapturePathForKing){
+        //     System.out.println("NEW");
+        //     for(int[] capturedPawn1 : listOfPaths){
+        //         //System.out.println("PATHlistOfPaths: "+capturedPawn1[0]+", "+capturedPawn1[1]);
+        //     }
+        // }
 
         return maxCapture;
     }
@@ -818,12 +819,10 @@ public class Game {
                         // maxCapturePath.clear();
                         // maxCapturedPawns.clear();
                         // pawnsWithAvaibileCaptures.clear();
-                        if(capturedPawnsByKing.size()!=0){
-                            capturedPawnsByKing.clear();
-                        }
-                        capturePathForKing.clear();
-                        maxCapturePathForKing.clear();
-                        maxCapturedPawnsByKing.clear();
+                        // capturedPawnsByKing.clear();
+                        // capturePathForKing.clear();
+                        // maxCapturePathForKing.clear();
+                        // maxCapturedPawnsByKing.clear();
                     }
                 }
             }
