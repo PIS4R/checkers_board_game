@@ -1,11 +1,6 @@
 package com.checkers;
-
-
 import java.awt.*;
-
 import javax.swing.JButton;
-import javax.swing.JPanel;
-
 
 public class Tile extends JButton{  //Rectangle
 
@@ -22,19 +17,9 @@ public class Tile extends JButton{  //Rectangle
 
 
     public Tile(int x, int y, Color color){
-
-
-        // this.color = color;
-        // this.RECT_X = x;
-        // this.RECT_Y = y;
         this.x = x;
         this.y = y;
         this.color = color;
-        // this.RECT_WIDTH = width;
-        // this.RECT_HEIGHT = height;
-        //System.out.println(RECT_X);
-        //System.out.println(RECT_Y);
-
     }
 
 

@@ -1,22 +1,10 @@
 package com.checkers;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 
-import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.Timer;
-import javax.swing.table.TableModel;
+
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,11 +14,6 @@ public class Game {
     final static int UP_RIGHT = 2;
     final static int UP_LEFT = 3;
     // private Game game;
-    private MainWindow window;
-    private boolean COLOR;
-
-    private int width, height;
-
     private Board board;
     public Tile[][] tiles;
     public Pawn[][] pawns;
@@ -38,36 +21,22 @@ public class Game {
     private Color currentPlayer;
     public boolean gameOver;
     public boolean gameDraw;
-
     public Color winner;
     private boolean capturingMoveAvailable;
-
     List<Pawn> capturedPawns;
     List<Pawn> maxCapturedPawns;
-
-    // Map<Integer, Integer> movesAfterCapture;
     ArrayList<int[]> movesAfterCapture;
-
-    ArrayList<Node> maxNodesInCapture;
-
     static List<int[]> maxCapturePath = new ArrayList<>();
     List<int[]> capturePath = new ArrayList<>();
-
-
-
     List<List<int[]>> maxMaxCapturePath;
     List<List<Pawn>> maxMaxCapturedPawns;
-
     List<Pawn> pawnsWithAvaibileCaptures = new ArrayList<>();
     int movesWithKings;
 
 
-    public Game(Board board, int width, int height) {
+    public Game(Board board) {
         // setSize( 400, 400 );
         //super.setBackground(Color.LIGHT_GRAY);
-
-        this.width = width;
-        this.height = height;
         this.board = board;
 
         currentPlayer = Color.BLACK;
@@ -79,8 +48,6 @@ public class Game {
         maxCapturedPawns = new ArrayList<>();
         // movesAfterCapture = new HashMap<>();
         movesAfterCapture = new ArrayList<int[]>();
-
-        maxNodesInCapture = new ArrayList<Node>();
 
         tiles = new Tile[8][8];
         pawns = new Pawn[8][8];
@@ -183,7 +150,7 @@ public class Game {
                         }
                     }
                     if(pawns[row][col]!=null)
-                    checkForKing(pawns[row][col]);
+                        checkForKing(pawns[row][col]);
                     board.repaint();
                     checkForGameOver();
                     checkForDraw();

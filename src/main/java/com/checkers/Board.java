@@ -1,69 +1,36 @@
 package com.checkers;
-
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import javax.imageio.ImageIO;
-import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.Timer;
-import javax.swing.table.TableModel;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-// import logic.MoveGenerator;
-// import model.Board;
-// import model.Game;
-// import model.HumanPlayer;
-// import model.NetworkPlayer;
-// import model.Player;
-// import network.Command;
-// import network.Session;
-
+//https://www.kurnik.pl/warcaby/zasady.phtml
 //https://archiwum.warcaby.pl/kodeks-warcabowy/134-rozdzial-i-oficjalne-reguly-gry-w-warcaby
-//konkretne zasady..
+//zasady
 
 public class Board extends JPanel {
 
-    private MainWindow window;
+    public static final int TILE_SIZE = 50;
+    public static final int BOARD_SIZE = 8;
+
     private boolean COLOR;
-    private int width, height;
+
     private Game game;
 
 
-    public Board(MainWindow window, int width, int height) {
+    public Board() {
         super.setBackground(Color.LIGHT_GRAY);
 
-        this.width = width;
-        this.height = height;
-        this.window = window;
-        this.game = new Game(this, width, height);
 
-        //tiles = new Tile[8][8];
-        //pawns = new Pawn[8][8];
+
+        this.game = new Game(this);
+
         game.setTiles();
         game.setPawns();
 
     }
 
-    // public Board(MainWindow window) { //Game game, Player player1, Player player2
-
-    // }
-
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(8 * 50, 8 * 50);
+        return new Dimension(BOARD_SIZE * TILE_SIZE, BOARD_SIZE * TILE_SIZE);
     }
 
     @Override
@@ -71,11 +38,11 @@ public class Board extends JPanel {
         super.paintComponent(g);
 
 
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                game.tiles[row][col].draw(g, 50);
+        for (int row = 0; row < BOARD_SIZE; row++) {
+            for (int col = 0; col < BOARD_SIZE; col++) {
+                game.tiles[row][col].draw(g, TILE_SIZE);
                 if (game.pawns[row][col] != null) {
-                    game.pawns[row][col].draw(g, 50);
+                    game.pawns[row][col].draw(g, TILE_SIZE);
                 }
             }
         }
@@ -83,7 +50,7 @@ public class Board extends JPanel {
         g.setColor(Color.YELLOW);
         if(!game.maxCapturePath.isEmpty()){
             for(Pawn pawn: game.pawnsWithAvaibileCaptures){
-            g.drawRect(pawn.getX() * 50, pawn.getY() * 50, 50, 50);
+            g.drawRect(pawn.getX() * TILE_SIZE, pawn.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }
         if(!game.maxMaxCapturePath.isEmpty()){
@@ -95,9 +62,7 @@ public class Board extends JPanel {
             }
             for(List<int[]> list : game.maxMaxCapturePath){
                 for (int[] coords : list) { // draw only maxCapture path
-                    //System.out.println("list: "+coords[0]+", "+coords[1]);
-
-                    g.drawRect(coords[0] * 50, coords[1] * 50, 50, 50);
+                    g.drawRect(coords[0] * TILE_SIZE, coords[1] * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 }
             }
         }
@@ -107,36 +72,23 @@ public class Board extends JPanel {
             g.setColor(Color.YELLOW);
             int selectedX = game.selectedPawn.getX();
             int selectedY = game.selectedPawn.getY();
-            g.drawRect(selectedX * 50, selectedY * 50, 50, 50);
+            g.drawRect(selectedX * TILE_SIZE, selectedY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
             g.setColor(Color.GREEN);
             if (game.maxCapturePath.isEmpty()) {
-                for (int row = 0; row < 8; row++) {
-                    for (int col = 0; col < 8; col++) {
+                for (int row = 0; row < BOARD_SIZE; row++) {
+                    for (int col = 0; col < BOARD_SIZE; col++) {
                         if(game.selectedPawn.isKing()){
                             if (game.isValidMove(game.selectedPawn, col, row)) {
-                                g.drawRect(row * 50, col * 50, 50, 50);
+                                g.drawRect(row * TILE_SIZE, col * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                             }
                         }else
                             if (game.isValidMove(game.selectedPawn, row, col)) {
-                                g.drawRect(col * 50, row * 50, 50, 50);
+                                g.drawRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                             }
                     }
                 }
-
-            } else {
-            //     g.setColor(Color.RED);
-            //     int captureX;
-            //     int captureY;
-
-            //     for(List<int[]> list : maxMaxCapturePath){
-            //         for (int[] coords : list) { // draw only maxCapture path
-            //             g.drawRect(coords[0] * 50, coords[1] * 50, 50, 50);
-            //         }
-            //     }
-            //     g.setColor(Color.GREEN);
             }
-
         }
 
         if (game.gameOver) {
