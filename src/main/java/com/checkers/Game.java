@@ -566,7 +566,6 @@ public class Game {
                                     maxCapturePathForKing.add(subCapturePath);
                                     maxCapturedPawnsByKing.add(capturedPawns);
                                     maxCapturePathForKing.add(capturePath);
-                                    System.out.println(" ");
                                 }
                                 if(!replacedPawns.isEmpty()){
                                     for(Pawn replacedPawn : replacedPawns)
