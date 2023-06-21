@@ -13,7 +13,6 @@ public class Game {
     final static int DOWN_LEFT = 1;
     final static int UP_RIGHT = 2;
     final static int UP_LEFT = 3;
-    // private Game game;
     private Board board;
     public Tile[][] tiles;
     public Pawn[][] pawns;
@@ -22,10 +21,8 @@ public class Game {
     public boolean gameOver;
     public boolean gameDraw;
     public Color winner;
-    //private boolean capturingMoveAvailable;
     List<Pawn> capturedPawns;
     List<Pawn> maxCapturedPawns;
-    //ArrayList<int[]> movesAfterCapture;
     static List<int[]> maxCapturePath = new ArrayList<>();
     List<int[]> capturePath = new ArrayList<>();
     List<List<int[]>> maxMaxCapturePath;
@@ -35,24 +32,17 @@ public class Game {
 
 
     public Game(Board board) {
-        // setSize( 400, 400 );
-        //super.setBackground(Color.LIGHT_GRAY);
         this.board = board;
-        currentPlayer = Color.BLACK;
+        currentPlayer = Color.WHITE;
         gameOver = false;
         gameDraw = false;
         movesWithKings = 0;
-        //capturingMoveAvailable = false;
         capturedPawns = new ArrayList<>();
         maxCapturedPawns = new ArrayList<>();
-        // movesAfterCapture = new HashMap<>();
-        //movesAfterCapture = new ArrayList<int[]>();
         tiles = new Tile[8][8];
         pawns = new Pawn[8][8];
         setTiles();
         setPawns();
-        //maxCapturePath = new ArrayList<>();
-        //capturePath = new ArrayList<>();
         maxMaxCapturePath = new ArrayList<>();
         maxMaxCapturedPawns = new ArrayList<>();
 
@@ -79,19 +69,17 @@ public class Game {
                                 if(col==pawn.getX()&&row==pawn.getY()){
                                     selectedPawn = pawns[row][col];
                                     selectedPawn.setColor(currentPlayer);
-
                                 }
                             }
                         } else{
                             selectedPawn = pawns[row][col];
                         }
                         board.repaint();
-
                     }
                 } else { // perform a move
                     if (!maxMaxCapturePath.isEmpty()) { //capture
                         for(List<int[]> list : maxMaxCapturePath){
-                            if(list.size() != 1){
+                            if(list.size() != 1){ //more than one pawn can capture
                                 if(row == list.get(list.size() - 1)[1] &&
                                 col == list.get(list.size() - 1)[0]){
                                     performMove(selectedPawn, row, col);
@@ -105,7 +93,7 @@ public class Game {
                                     break;
                                 }
                             }
-                            else{
+                            else{  //only one pawn has a capture
                                 if(row == list.get(0)[1] &&
                                 col == list.get(0)[0]){
                                     performMove(selectedPawn, row, col);
@@ -372,16 +360,12 @@ public class Game {
         if(pawns[new_X][new_Y] != null) return false;
         if (pawn.getColor() != currentPlayer)
             return false;
-
         int current_X = pawn.getY();
         int current_Y = pawn.getX();
-
         int rowDiff = new_X - current_X;
         int colDiff = new_Y - current_Y;
-
         int rowDirection = rowDiff >= 0 ? 1 : -1;
         int colDirection = colDiff >= 0 ? 1 : -1;
-
         if (!pawn.isKing()) {
             if (pawn.getColor() == Color.BLACK && rowDiff < 0) {
                 return false;
@@ -390,7 +374,6 @@ public class Game {
                 return false;
             }
         }else{
-
             if(Math.abs(rowDiff) == Math.abs(colDiff)){
                 int check_new_X = new_X-rowDirection;
                 int check_new_Y = new_Y-colDirection;
@@ -406,31 +389,22 @@ public class Game {
                 else return false;
             }
         }
-
         if (Math.abs(rowDiff) == 1 && Math.abs(colDiff) == 1) {
             return true;
         }
-
         if(pawn.isKing()) return false;
-
         int midRow = current_X + rowDirection;
         int midCol = current_Y + colDirection;
-
         while (midRow != new_X && midCol != new_Y) {
-
             if (midRow > 7 || midCol > 7)
                 break;
-
             if (pawns[midRow][midCol] != null &&
                     pawns[midRow][midCol].getColor() != pawn.getColor()) {
-
                 midRow += rowDirection;
                 midCol += colDirection;
-
                 if (midRow == new_X && midCol == new_Y) {
                     return true;
                 }
-
                 if (pawns[midRow][midCol] != null) {
                     return false;
                 }
@@ -482,7 +456,7 @@ public class Game {
         subKings.clear();
         return maxCapture;
     }
-    //private boolean endFlag = false;
+
     List<Pawn> replacedPawns = new ArrayList<>();
     List<Pawn> subKings = new ArrayList<>();
     List<Pawn> capturedPawnsByKing = new ArrayList<>();
@@ -491,7 +465,6 @@ public class Game {
     List<List<int[]>> maxCapturePathForKing = new ArrayList<>();
     boolean endOfPathFlag = false;
     boolean kingMultiCaptures = false;
-
 
     private int getMaxCaptureForKing(Pawn king, Pawn orgKing, int row, int col, List<int[]> capturePath,
     List<Pawn> capturedPawns) {
@@ -625,7 +598,6 @@ public class Game {
             current_Y_t += (Y_Diff/Math.abs(Y_Diff));
         }
         if(pawn_counter > 1) return false;
-
         return Math.abs(X_Diff) == Math.abs(Y_Diff);
     }
 
